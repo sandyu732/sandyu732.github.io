@@ -1,2 +1,3 @@
-# knowledge-base.github.io
-A knowledge based of various learned topics and concepts
+# Knowledge Base
+
+A library of various learned topics and concepts
