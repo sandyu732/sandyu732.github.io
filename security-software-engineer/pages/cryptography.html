@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cryptography · Google Security SWE Interview Prep</title>
+<meta name="description" content="Encryption vs encoding vs hashing vs signing, AEAD, PKI trust, forward secrecy, entropy, and post-quantum standards.">
+<link rel="stylesheet" href="../assets/style.css">
+
+</head>
+<body>
+
+<nav class="topnav">
+  <a class="brand" href="../index.html"><span class="dot"></span>Security interview prep</a>
+  <div class="topnav-actions">
+    <button class="icon-btn" onclick="toggleTheme()">Theme</button>
+    <button class="icon-btn" onclick="toggleMenu()">Menu</button>
+  </div>
+</nav>
+
+<div class="menu-panel" id="menu-panel">
+  <div class="menu-sheet">
+    <button class="icon-btn menu-close" onclick="toggleMenu()">Close</button>
+    <a href="../index.html" style="font-weight:600;font-size:15px;display:block;margin:4px 0 16px;">Home</a>
+    <h4>Tier 1 — go deep</h4>
+<a href="networking-tls.html">Networking & TLS</a>
+<a href="cryptography.html" class="active">Cryptography</a>
+<a href="web-app-security.html">Web app security</a>
+<a href="auth-identity.html">Auth & identity</a>
+<a href="coding-practice.html">Security-themed coding</a>
+<h4>Tier 2 — working knowledge</h4>
+<a href="threat-modeling.html">Threat modeling (STRIDE tool)</a>
+<a href="cloud-infra-security.html">Cloud & infra security</a>
+<a href="detection-incident-response.html">Detection & incident response</a>
+<h4>Tier 3 — conversational fluency</h4>
+<a href="malware-reversing.html">Malware & reversing</a>
+<a href="exploits-attack-structure.html">Exploits & attack structure</a>
+<a href="digital-forensics.html">Digital forensics</a>
+<h4>Real-world breaches</h4>
+<a href="breaches.html">Breach timeline (hub)</a>
+<a href="breach-diginotar.html">DigiNotar (2011)</a>
+<a href="breach-heartbleed.html">Heartbleed (2014)</a>
+<a href="breach-capital-one.html">Capital One SSRF (2019)</a>
+<a href="breach-solarwinds.html">SolarWinds / Sunburst (2020)</a>
+<a href="breach-log4shell.html">Log4Shell (2021)</a>
+<a href="breach-uber.html">Uber MFA fatigue (2022)</a>
+<a href="breach-xz-utils.html">xz-utils backdoor (2024)</a>
+<h4>Practice tools</h4>
+<a href="flashcards.html">Flashcard deck</a>
+<a href="interview-technique.html">Interview technique cheat sheet</a>
+<a href="resources.html">Sources & further reading</a>
+  </div>
+</div>
+
+<main>
+
+<span class="badge badge-tier1">Tier 1 — go deep</span><h1>Cryptography</h1><p class="subtitle">The five-way distinction, the symmetric/asymmetric pattern reused everywhere, PKI trust, forward secrecy, and where post-quantum crypto stands in 2026.</p><h2>Five-way distinction</h2><p>This is a great structuring device for any crypto answer &mdash; lead with it, then let the interviewer pull you deeper.</p><div class="term"><div class="term-name"><code>Encryption</code></div>Secrecy. Reversible with a key.</div><div class="term"><div class="term-name"><code>Encoding</code></div>Compatibility. Reversible, no key &mdash; Base64, URL encoding.</div><div class="term"><div class="term-name"><code>Hashing</code></div>Integrity. One-way, fixed-length fingerprint.</div><div class="term"><div class="term-name"><code>Obfuscation</code></div>Hindrance. Reversible, no formal guarantee.</div><div class="term"><div class="term-name"><code>Signing</code></div>Authenticity. Hash + private-key stamp, verified with the public key.</div><h2>Symmetric vs asymmetric &mdash; know the why, not just the definitions</h2><div class="diagram-wrap"><svg width="100%" viewBox="0 0 680 210" role="img" xmlns="http://www.w3.org/2000/svg"><rect x="20" y="20" width="300" height="170" rx="12" style="fill:var(--surface-2);stroke:var(--accent);stroke-width:1.5"/><text class="chain-title" x="170" y="48" text-anchor="middle" style="fill:var(--accent)">Symmetric</text><text class="chain-sub" x="38" y="78" text-anchor="start">- Fast, one shared key</text><text class="chain-sub" x="38" y="108" text-anchor="start">- AES, ChaCha20</text><text class="chain-sub" x="38" y="138" text-anchor="start">- Hard problem: key distribution</text><text class="chain-sub" x="38" y="168" text-anchor="start">- Used for bulk data</text><rect x="360" y="20" width="300" height="170" rx="12" style="fill:var(--surface-2);stroke:var(--purple);stroke-width:1.5"/><text class="chain-title" x="510" y="48" text-anchor="middle" style="fill:var(--purple)">Asymmetric</text><text class="chain-sub" x="378" y="78" text-anchor="start">- Slow, public/private keypair</text><text class="chain-sub" x="378" y="108" text-anchor="start">- RSA, ECC/ECDH</text><text class="chain-sub" x="378" y="138" text-anchor="start">- Solves key distribution</text><text class="chain-sub" x="378" y="168" text-anchor="start">- Used to exchange a session key</text></svg></div><p>Real protocols (TLS, PGP, Signal) use asymmetric crypto only to establish a symmetric session key, then switch to symmetric for the actual payload. This "asymmetric for exchange, symmetric for bulk" pattern is the single most reused idea in applied cryptography &mdash; recognize it everywhere.</p><h3>AES-GCM specifically</h3><p>An AEAD (authenticated encryption with associated data) cipher &mdash; it provides confidentiality <em>and</em> integrity in one primitive, which is why it replaced separate encrypt-then-MAC constructions in most modern protocols.</p><div class="callout danger"><div class="callout-title">Nonce reuse is catastrophic</div>GCM's security depends on never reusing a nonce with the same key. Reuse leaks the XOR of two plaintexts and can recover the authentication key.</div><h2>PKI and trust</h2><p>A CA signs a certificate binding a public key to an identity; browsers/OSes ship a root store of CAs they trust; trust is transitive down the chain. <a href="../pages/breach-diginotar.html">DigiNotar (2011)</a> is the canonical failure case &mdash; a CA was compromised and issued fraudulent certificates (including for *.google.com), used to intercept Iranian Gmail users' traffic.</p><p>Certificate Transparency exists precisely because DigiNotar-style silent mis-issuance was undetectable before public, append-only, auditable logs of every issued certificate.</p><h2>Forward secrecy, concretely</h2><p>In a Signal/WhatsApp-style protocol, the Double Ratchet derives a new symmetric key per message from a continuously advancing key chain, so compromising today's key doesn't expose yesterday's or tomorrow's messages. This is the practical extension of the ECDHE idea in TLS &mdash; same principle (ephemeral keys), applied at message granularity instead of session granularity. <a href="../pages/breach-heartbleed.html">Heartbleed</a> is the best real-world example for explaining forward secrecy's actual guarantee precisely.</p><h2>Entropy</h2><p>PRNGs need a real entropy source to seed from. Entropy buffer draining (e.g. a freshly booted VM/container with no accumulated hardware entropy) has caused real key-generation weaknesses &mdash; embedded devices have shared RSA keys because they generated keys before the entropy pool filled.</p><h2>2025&ndash;2026 update: post-quantum cryptography is now mandated, not researched</h2><p>NIST finalized three PQC standards in August 2024:</p><div class="stat-row"><div class="stat"><div class="num">FIPS 203</div><div class="lbl">ML-KEM — key encapsulation</div></div><div class="stat"><div class="num">FIPS 204</div><div class="lbl">ML-DSA — digital signatures (default)</div></div><div class="stat"><div class="num">FIPS 205</div><div class="lbl">SLH-DSA — hash-based backup</div></div></div><p>ML-DSA (lattice-based) is NIST's recommended default replacement for RSA/ECDSA signing. SLH-DSA is kept as a structurally independent backup in case lattice assumptions are ever broken. The NSA's CNSA 2.0 sets <strong>2030</strong> as the mandatory PQC migration deadline for National Security Systems, pulling forward migration timelines industry-wide.</p><h2>Practice questions</h2><ul><li>Why is nonce reuse catastrophic in AES-GCM but a different failure mode in AES-CBC?</li><li>What happens when a trusted CA is compromised, and how would you design around that risk?</li><li>Why does a hash-based signature scheme (SLH-DSA) exist as a backup to lattice-based ML-DSA?</li></ul><div class="pagenav"><a class="" href="networking-tls.html"><div class="dir">Previous</div>Networking & TLS</a><a class="next" href="web-app-security.html"><div class="dir">Next</div>Web application security</a></div>
+
+    <div class="check-row" style="margin-top:36px;border-top:1px solid var(--border);border-bottom:none;padding-top:16px;">
+      <input type="checkbox" id="page-complete">
+      <label for="page-complete">Mark this page as studied</label>
+    </div>
+    <script>initPageComplete('cryptography');</script>
+</main>
+
+<footer>
+  Built from Grace Nolan's Google Security Engineering interview notes, reorganized and updated with 2025&ndash;2026 developments. Personal study notes, not affiliated with Google.
+</footer>
+
+<script src="../assets/app.js"></script>
+
+</body>
+</html>

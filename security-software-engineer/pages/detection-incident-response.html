@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Detection & incident response · Google Security SWE Interview Prep</title>
+<meta name="description" content="IDS/SIEM pipeline, IOCs vs behavioral detection, PICERL/IMAG response models, and a practice scenario.">
+<link rel="stylesheet" href="../assets/style.css">
+
+</head>
+<body>
+
+<nav class="topnav">
+  <a class="brand" href="../index.html"><span class="dot"></span>Security interview prep</a>
+  <div class="topnav-actions">
+    <button class="icon-btn" onclick="toggleTheme()">Theme</button>
+    <button class="icon-btn" onclick="toggleMenu()">Menu</button>
+  </div>
+</nav>
+
+<div class="menu-panel" id="menu-panel">
+  <div class="menu-sheet">
+    <button class="icon-btn menu-close" onclick="toggleMenu()">Close</button>
+    <a href="../index.html" style="font-weight:600;font-size:15px;display:block;margin:4px 0 16px;">Home</a>
+    <h4>Tier 1 — go deep</h4>
+<a href="networking-tls.html">Networking & TLS</a>
+<a href="cryptography.html">Cryptography</a>
+<a href="web-app-security.html">Web app security</a>
+<a href="auth-identity.html">Auth & identity</a>
+<a href="coding-practice.html">Security-themed coding</a>
+<h4>Tier 2 — working knowledge</h4>
+<a href="threat-modeling.html">Threat modeling (STRIDE tool)</a>
+<a href="cloud-infra-security.html">Cloud & infra security</a>
+<a href="detection-incident-response.html" class="active">Detection & incident response</a>
+<h4>Tier 3 — conversational fluency</h4>
+<a href="malware-reversing.html">Malware & reversing</a>
+<a href="exploits-attack-structure.html">Exploits & attack structure</a>
+<a href="digital-forensics.html">Digital forensics</a>
+<h4>Real-world breaches</h4>
+<a href="breaches.html">Breach timeline (hub)</a>
+<a href="breach-diginotar.html">DigiNotar (2011)</a>
+<a href="breach-heartbleed.html">Heartbleed (2014)</a>
+<a href="breach-capital-one.html">Capital One SSRF (2019)</a>
+<a href="breach-solarwinds.html">SolarWinds / Sunburst (2020)</a>
+<a href="breach-log4shell.html">Log4Shell (2021)</a>
+<a href="breach-uber.html">Uber MFA fatigue (2022)</a>
+<a href="breach-xz-utils.html">xz-utils backdoor (2024)</a>
+<h4>Practice tools</h4>
+<a href="flashcards.html">Flashcard deck</a>
+<a href="interview-technique.html">Interview technique cheat sheet</a>
+<a href="resources.html">Sources & further reading</a>
+  </div>
+</div>
+
+<main>
+
+<span class="badge badge-tier2">Tier 2 — working knowledge</span><h1>Detection &amp; incident response</h1><p class="subtitle">The detection pipeline, IOCs vs behavioral detection, response models, and a scenario to practice out loud.</p><h2>Signal generation &rarr; triage &rarr; alerting pipeline</h2><div class="diagram-wrap"><svg width="100%" viewBox="0 0 680 354" role="img" xmlns="http://www.w3.org/2000/svg"><defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="var(--text-muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs><g class="chain-box"><rect x="170" y="24" width="340" height="56" rx="10" style="stroke:var(--accent)"/><text class="chain-title" x="340" y="48" text-anchor="middle">1. Signal generation</text><text class="chain-sub" x="340" y="66" text-anchor="middle">IDS (signature or behavior-based), honeypots, host/network telemetry</text></g><line class="chain-arrow" x1="340" y1="80" x2="340" y2="112" marker-end="url(#arrow)"/><g class="chain-box"><rect x="170" y="112" width="340" height="56" rx="10" style="stroke:var(--accent)"/><text class="chain-title" x="340" y="136" text-anchor="middle">2. Aggregation & correlation</text><text class="chain-sub" x="340" y="154" text-anchor="middle">SIEM (e.g. Splunk) aggregates logs across sources</text></g><line class="chain-arrow" x1="340" y1="168" x2="340" y2="200" marker-end="url(#arrow)"/><g class="chain-box"><rect x="170" y="200" width="340" height="56" rx="10" style="stroke:var(--amber)"/><text class="chain-title" x="340" y="224" text-anchor="middle">3. Automated triage</text><text class="chain-sub" x="340" y="242" text-anchor="middle">ML / rules reduce analyst fatigue before a human sees it</text></g><line class="chain-arrow" x1="340" y1="256" x2="340" y2="288" marker-end="url(#arrow)"/><g class="chain-box"><rect x="170" y="288" width="340" height="56" rx="10" style="stroke:var(--red)"/><text class="chain-title" x="340" y="312" text-anchor="middle">4. Human alerting</text><text class="chain-sub" x="340" y="330" text-anchor="middle">A human is alerted only once confidence is reasonably high</text></g></svg></div><h2>IOCs vs behavioral detection</h2><p>IOCs (known-bad IPs, hashes, domains) are fast but brittle &mdash; trivially evaded by changing infrastructure. Behavioral/anomaly detection (unusual login times, unusual data volume, unusual process ancestry) is more resilient but noisier and needs a good baseline. A role suddenly issuing high-volume calls across resources it doesn't normally touch &mdash; exactly what happened undetected for months in the <a href="../pages/breach-capital-one.html">Capital One</a> breach &mdash; is a strong anomaly signal that static policy review alone would never catch.</p><h2>Incident response models</h2><div class="term"><div class="term-name"><code>SANS PICERL</code></div>Preparation, Identification, Containment, Eradication, Recovery, Lessons learned &mdash; the industry-standard mental model.</div><div class="term"><div class="term-name"><code>Google's IMAG</code></div>Incident Management At Google, modeled on FEMA's incident command system. Google runs IR with a formal incident-commander structure &mdash; worth mentioning to show you've looked past generic frameworks toward how Google specifically operates.</div><h2>Practice scenario, out loud</h2><div class="callout"><div class="callout-title">Prompt</div>"You get an alert that a service account exfiltrated 2GB to an external IP at 3am. Walk me through what you do."</div><p>Structure your answer: clarify scope &rarr; contain (revoke/rotate credentials, isolate host) &rarr; identify root cause and blast radius &rarr; eradicate &rarr; recover &rarr; postmortem/lessons-learned. Explicitly mention why you wouldn't tip off the attacker prematurely, and when you'd loop in legal/comms.</p><div class="pagenav"><a class="" href="cloud-infra-security.html"><div class="dir">Previous</div>Cloud & infrastructure security</a><a class="next" href="malware-reversing.html"><div class="dir">Next</div>Malware & reversing</a></div>
+
+    <div class="check-row" style="margin-top:36px;border-top:1px solid var(--border);border-bottom:none;padding-top:16px;">
+      <input type="checkbox" id="page-complete">
+      <label for="page-complete">Mark this page as studied</label>
+    </div>
+    <script>initPageComplete('detection-incident-response');</script>
+</main>
+
+<footer>
+  Built from Grace Nolan's Google Security Engineering interview notes, reorganized and updated with 2025&ndash;2026 developments. Personal study notes, not affiliated with Google.
+</footer>
+
+<script src="../assets/app.js"></script>
+
+</body>
+</html>

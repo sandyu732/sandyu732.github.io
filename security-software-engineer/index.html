@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" class="wide">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Home · Google Security SWE Interview Prep</title>
+<meta name="description" content="A prioritized, updated study site for a Google Senior SWE Security Engineering interview, built from Grace Nolan's original notes.">
+<link rel="stylesheet" href="assets/style.css">
+
+</head>
+<body>
+
+<nav class="topnav">
+  <a class="brand" href="index.html"><span class="dot"></span>Security interview prep</a>
+  <div class="topnav-actions">
+    <button class="icon-btn" onclick="toggleTheme()">Theme</button>
+    <button class="icon-btn" onclick="toggleMenu()">Menu</button>
+  </div>
+</nav>
+
+<div class="menu-panel" id="menu-panel">
+  <div class="menu-sheet">
+    <button class="icon-btn menu-close" onclick="toggleMenu()">Close</button>
+    <a href="index.html" style="font-weight:600;font-size:15px;display:block;margin:4px 0 16px;">Home</a>
+    <h4>Tier 1 — go deep</h4>
+<a href="pages/networking-tls.html">Networking & TLS</a>
+<a href="pages/cryptography.html">Cryptography</a>
+<a href="pages/web-app-security.html">Web app security</a>
+<a href="pages/auth-identity.html">Auth & identity</a>
+<a href="pages/coding-practice.html">Security-themed coding</a>
+<h4>Tier 2 — working knowledge</h4>
+<a href="pages/threat-modeling.html">Threat modeling (STRIDE tool)</a>
+<a href="pages/cloud-infra-security.html">Cloud & infra security</a>
+<a href="pages/detection-incident-response.html">Detection & incident response</a>
+<h4>Tier 3 — conversational fluency</h4>
+<a href="pages/malware-reversing.html">Malware & reversing</a>
+<a href="pages/exploits-attack-structure.html">Exploits & attack structure</a>
+<a href="pages/digital-forensics.html">Digital forensics</a>
+<h4>Real-world breaches</h4>
+<a href="pages/breaches.html">Breach timeline (hub)</a>
+<a href="pages/breach-diginotar.html">DigiNotar (2011)</a>
+<a href="pages/breach-heartbleed.html">Heartbleed (2014)</a>
+<a href="pages/breach-capital-one.html">Capital One SSRF (2019)</a>
+<a href="pages/breach-solarwinds.html">SolarWinds / Sunburst (2020)</a>
+<a href="pages/breach-log4shell.html">Log4Shell (2021)</a>
+<a href="pages/breach-uber.html">Uber MFA fatigue (2022)</a>
+<a href="pages/breach-xz-utils.html">xz-utils backdoor (2024)</a>
+<h4>Practice tools</h4>
+<a href="pages/flashcards.html">Flashcard deck</a>
+<a href="pages/interview-technique.html">Interview technique cheat sheet</a>
+<a href="pages/resources.html">Sources & further reading</a>
+  </div>
+</div>
+
+<main>
+
+<div class="eyebrow">Personal study site &middot; built July 2026</div><h1>Google senior SWE (security engineering) interview prep</h1><p class="subtitle">Built from Grace Nolan's Google Security Engineering interview notes, reorganized by priority and updated with 2025&ndash;2026 developments &mdash; post-quantum crypto, passkeys, the xz-utils backdoor, Rust-driven memory safety, and Google's Beyond Zero evolution of BeyondCorp.</p><div class="progress-row"><div class="progress-track" style="flex:1;"><div class="progress-fill" id="progress-fill" style="width:0%;"></div></div><span class="pct" id="progress-pct">0 / 22 pages marked complete</span></div><div class="callout"><div class="callout-title">Reality check — read this first</div>This covers roughly 16 domains — enough for a multi-month plan. Tier 1 (5 pages) is where real depth is scored in a Senior SWE Security loop: go deep, derive from first principles, don't just recite definitions. Tier 2 (3 pages) needs solid working knowledge — hold a 15-minute conversation, reason through a scenario. Tier 3 (3 pages) needs conversational fluency only — know the shape well enough to not go blank and to ask smart clarifying questions. Depth on five topics beats shallow coverage of sixteen.</div><div class="callout now"><div class="callout-title">The 2026 Google loop</div>Google is shifting back toward in-person interviews, added a pre-loop "Google Hiring Assessment" screen, and is weaving more AI/ML system design questions into onsite loops. A Security Engineering onsite typically runs up to ~6 rounds: coding/data structures, one or two security-design rounds, and a Googleyness/Leadership round. Confirm your specific loop with your recruiter. Full checklist on the <a href="pages/interview-technique.html">interview technique page</a>.</div><h2>Tier 1 — go deep</h2><p>The five topics most likely to carry real weight. You should be able to derive answers from first principles here, not recite definitions.</p><div class="card-grid"><a class="card" href="pages/networking-tls.html" data-slug="networking-tls"><div class="card-title">Networking & TLS<span class="badge badge-tier1">T1</span></div><p class="card-desc">TLS 1.3 handshake, forward secrecy, downgrade attacks, post-quantum key exchange.</p></a><a class="card" href="pages/cryptography.html" data-slug="cryptography"><div class="card-title">Cryptography<span class="badge badge-tier1">T1</span></div><p class="card-desc">Symmetric/asymmetric, AEAD, PKI trust, forward secrecy, ML-KEM/ML-DSA.</p></a><a class="card" href="pages/web-app-security.html" data-slug="web-app-security"><div class="card-title">Web app security<span class="badge badge-tier1">T1</span></div><p class="card-desc">XSS, CSRF, SQLi, SSRF root causes, plus the 2025 OWASP LLM Top 10.</p></a><a class="card" href="pages/auth-identity.html" data-slug="auth-identity"><div class="card-title">Auth & identity<span class="badge badge-tier1">T1</span></div><p class="card-desc">OAuth/OIDC, Kerberos attacks, MFA comparison, the 2025 passkey shift.</p></a><a class="card" href="pages/coding-practice.html" data-slug="coding-practice"><div class="card-title">Security-themed coding<span class="badge badge-tier1">T1</span></div><p class="card-desc">Six practice problems bridging DS&A with security framing.</p></a></div><h2>Tier 2 — solid working knowledge</h2><div class="card-grid"><a class="card" href="pages/threat-modeling.html" data-slug="threat-modeling"><div class="card-title">Threat modeling<span class="badge badge-tier2">T2</span></div><p class="card-desc">STRIDE, DREAD, and a live tool with three scenarios to practice out loud.</p></a><a class="card" href="pages/cloud-infra-security.html" data-slug="cloud-infra-security"><div class="card-title">Cloud & infra security<span class="badge badge-tier2">T2</span></div><p class="card-desc">Container vs VM isolation, BeyondCorp, supply chain, Rust memory safety.</p></a><a class="card" href="pages/detection-incident-response.html" data-slug="detection-incident-response"><div class="card-title">Detection & incident response<span class="badge badge-tier2">T2</span></div><p class="card-desc">IDS/SIEM pipeline, PICERL/IMAG, a scenario to talk through.</p></a></div><h2>Tier 3 — conversational fluency only</h2><div class="card-grid"><a class="card" href="pages/malware-reversing.html" data-slug="malware-reversing"><div class="card-title">Malware & reversing<span class="badge badge-tier3">T3</span></div><p class="card-desc">Named examples, static vs dynamic analysis, at a conversational level.</p></a><a class="card" href="pages/exploits-attack-structure.html" data-slug="exploits-attack-structure"><div class="card-title">Exploits & attack structure<span class="badge badge-tier3">T3</span></div><p class="card-desc">The full MITRE ATT&CK-shaped chain, recon through impact.</p></a><a class="card" href="pages/digital-forensics.html" data-slug="digital-forensics"><div class="card-title">Digital forensics<span class="badge badge-tier3">T3</span></div><p class="card-desc">Evidence volatility, memory/disk/mobile domains, chain of custody.</p></a></div><h2>Real-world breaches &amp; practice tools</h2><div class="card-grid"><a class="card" href="pages/breaches.html" data-slug="breaches"><div class="card-title">Breach timeline<span class="badge badge-breach">breach</span></div><p class="card-desc">Seven real breaches, each mapped to a concept above.</p></a><a class="card" href="pages/flashcards.html" data-slug="flashcards"><div class="card-title">Flashcard deck<span class="badge badge-tool">tool</span></div><p class="card-desc">18-card spaced-repetition deck across Tier 1/2 topics.</p></a><a class="card" href="pages/interview-technique.html" data-slug="interview-technique"><div class="card-title">Interview technique<span class="badge badge-tool">tool</span></div><p class="card-desc">The per-question checklist and current Google loop structure.</p></a><a class="card" href="pages/resources.html" data-slug="resources"><div class="card-title">Sources & further reading<span class="badge badge-tool">tool</span></div><p class="card-desc">Everything this site is fact-checked against.</p></a></div><h2>Suggested schedule</h2><table><tr><th>When</th><th>Focus</th></tr><tr><td>Day 1 (weekend)</td><td>Networking &amp; TLS + Cryptography, deep. 2 coding problems in the evening.</td></tr><tr><td>Day 2 (weekend)</td><td>Web app security + Auth &amp; identity, deep. 2 more coding problems, then explain 3 Tier 1 topics out loud, timed.</td></tr><tr><td>Day 3 (evening)</td><td>Threat modeling + Cloud &amp; infra security.</td></tr><tr><td>Day 4 (evening)</td><td>Detection &amp; incident response + 1&ndash;2 coding problems.</td></tr><tr><td>Day 5 (evening)</td><td>Tier 3 breadth pass: malware, exploits, attack structure. Revisit anything still shaky.</td></tr><tr><td>Day 6 (evening)</td><td>Digital forensics breadth pass, then one full mock interview: a coding problem plus a security-design prompt, talked through start to finish.</td></tr><tr><td>Day 7 / day before</td><td>Light review only. Walk the flashcard deck once more. Re-read the interview technique page. Sleep beats one more hour of cramming.</td></tr></table><div class="callout tip"><div class="callout-title">How to study each page</div>Cover the term, guess the answer first, then check yourself. Say it out loud as if explaining to an interviewer. Push one layer deeper than the page gives you. Connect every mechanism to an attack — the breach pages exist for exactly that.</div>
+
+</main>
+
+<footer>
+  Built from Grace Nolan's Google Security Engineering interview notes, reorganized and updated with 2025&ndash;2026 developments. Personal study notes, not affiliated with Google.
+</footer>
+
+<script src="assets/app.js"></script>
+<script>initProgressSummary(['networking-tls', 'cryptography', 'web-app-security', 'auth-identity', 'coding-practice', 'threat-modeling', 'cloud-infra-security', 'detection-incident-response', 'malware-reversing', 'exploits-attack-structure', 'digital-forensics', 'breaches', 'breach-diginotar', 'breach-heartbleed', 'breach-capital-one', 'breach-solarwinds', 'breach-log4shell', 'breach-uber', 'breach-xz-utils', 'flashcards', 'interview-technique', 'resources']);</script>
+</body>
+</html>

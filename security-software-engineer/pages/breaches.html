@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Real-world breach timeline · Google Security SWE Interview Prep</title>
+<meta name="description" content="Seven real security breaches, each mapped to a concept from the study pages: DigiNotar, Heartbleed, Capital One, SolarWinds, Log4Shell, Uber, xz-utils.">
+<link rel="stylesheet" href="../assets/style.css">
+
+</head>
+<body>
+
+<nav class="topnav">
+  <a class="brand" href="../index.html"><span class="dot"></span>Security interview prep</a>
+  <div class="topnav-actions">
+    <button class="icon-btn" onclick="toggleTheme()">Theme</button>
+    <button class="icon-btn" onclick="toggleMenu()">Menu</button>
+  </div>
+</nav>
+
+<div class="menu-panel" id="menu-panel">
+  <div class="menu-sheet">
+    <button class="icon-btn menu-close" onclick="toggleMenu()">Close</button>
+    <a href="../index.html" style="font-weight:600;font-size:15px;display:block;margin:4px 0 16px;">Home</a>
+    <h4>Tier 1 — go deep</h4>
+<a href="networking-tls.html">Networking & TLS</a>
+<a href="cryptography.html">Cryptography</a>
+<a href="web-app-security.html">Web app security</a>
+<a href="auth-identity.html">Auth & identity</a>
+<a href="coding-practice.html">Security-themed coding</a>
+<h4>Tier 2 — working knowledge</h4>
+<a href="threat-modeling.html">Threat modeling (STRIDE tool)</a>
+<a href="cloud-infra-security.html">Cloud & infra security</a>
+<a href="detection-incident-response.html">Detection & incident response</a>
+<h4>Tier 3 — conversational fluency</h4>
+<a href="malware-reversing.html">Malware & reversing</a>
+<a href="exploits-attack-structure.html">Exploits & attack structure</a>
+<a href="digital-forensics.html">Digital forensics</a>
+<h4>Real-world breaches</h4>
+<a href="breaches.html" class="active">Breach timeline (hub)</a>
+<a href="breach-diginotar.html">DigiNotar (2011)</a>
+<a href="breach-heartbleed.html">Heartbleed (2014)</a>
+<a href="breach-capital-one.html">Capital One SSRF (2019)</a>
+<a href="breach-solarwinds.html">SolarWinds / Sunburst (2020)</a>
+<a href="breach-log4shell.html">Log4Shell (2021)</a>
+<a href="breach-uber.html">Uber MFA fatigue (2022)</a>
+<a href="breach-xz-utils.html">xz-utils backdoor (2024)</a>
+<h4>Practice tools</h4>
+<a href="flashcards.html">Flashcard deck</a>
+<a href="interview-technique.html">Interview technique cheat sheet</a>
+<a href="resources.html">Sources & further reading</a>
+  </div>
+</div>
+
+<main>
+
+<h1>Real-world breach timeline</h1><p class="subtitle">Seven incidents, each teaching a concept you need cold. Read the study page for the concept first, then read the breach to see it fail in production.</p><div class="card-grid" style="grid-template-columns:1fr;"><a class="card" href="../pages/breach-diginotar.html"><div class="card-title">2011 &middot; DigiNotar CA compromise <span class="badge badge-breach">breach</span></div><p class="card-desc">A trusted certificate authority was breached and issued fraudulent certificates for google.com, used to intercept Iranian Gmail users' traffic.</p><p class="card-desc" style="margin-top:6px;"><em>Maps to: PKI trust chain</em></p></a><a class="card" href="../pages/breach-heartbleed.html"><div class="card-title">2014 &middot; Heartbleed (OpenSSL) <span class="badge badge-breach">breach</span></div><p class="card-desc">A missing bounds check in OpenSSL's heartbeat extension let attackers read up to 64KB of adjacent memory per request, including private keys.</p><p class="card-desc" style="margin-top:6px;"><em>Maps to: TLS internals & memory safety</em></p></a><a class="card" href="../pages/breach-capital-one.html"><div class="card-title">2019 &middot; Capital One SSRF <span class="badge badge-breach">breach</span></div><p class="card-desc">A misconfigured WAF let an attacker use SSRF to reach the AWS instance metadata endpoint, stealing IAM credentials and exposing 106M records.</p><p class="card-desc" style="margin-top:6px;"><em>Maps to: SSRF & cloud metadata risk</em></p></a><a class="card" href="../pages/breach-solarwinds.html"><div class="card-title">2020 &middot; SolarWinds / Sunburst <span class="badge badge-breach">breach</span></div><p class="card-desc">Attackers compromised SolarWinds' build pipeline to inject a backdoor into signed software updates, then used forged Kerberos tickets to move laterally.</p><p class="card-desc" style="margin-top:6px;"><em>Maps to: Supply chain & lateral movement</em></p></a><a class="card" href="../pages/breach-log4shell.html"><div class="card-title">2021 &middot; Log4Shell <span class="badge badge-breach">breach</span></div><p class="card-desc">A single unauthenticated RCE in a near-ubiquitous Java logging library, triggered by a crafted string, put a huge slice of the internet at risk overnight.</p><p class="card-desc" style="margin-top:6px;"><em>Maps to: Dependency risk & patch velocity</em></p></a><a class="card" href="../pages/breach-uber.html"><div class="card-title">2022 &middot; Uber MFA fatigue <span class="badge badge-breach">breach</span></div><p class="card-desc">An attacker spammed push-notification MFA prompts until an employee approved one, then found hardcoded admin credentials on an internal share.</p><p class="card-desc" style="margin-top:6px;"><em>Maps to: MFA weaknesses</em></p></a><a class="card" href="../pages/breach-xz-utils.html"><div class="card-title">2024 &middot; xz-utils backdoor <span class="badge badge-breach">breach</span></div><p class="card-desc">A patient, two-year social-engineering campaign earned commit access to a compression library, hiding a backdoor in the build system targeting sshd.</p><p class="card-desc" style="margin-top:6px;"><em>Maps to: Supply chain & build-system trust</em></p></a></div><div class="pagenav"><a class="" href="digital-forensics.html"><div class="dir">Previous</div>Digital forensics</a><a class="next" href="breach-diginotar.html"><div class="dir">Next</div>DigiNotar CA breach (2011)</a></div>
+
+    <div class="check-row" style="margin-top:36px;border-top:1px solid var(--border);border-bottom:none;padding-top:16px;">
+      <input type="checkbox" id="page-complete">
+      <label for="page-complete">Mark this page as studied</label>
+    </div>
+    <script>initPageComplete('breaches');</script>
+</main>
+
+<footer>
+  Built from Grace Nolan's Google Security Engineering interview notes, reorganized and updated with 2025&ndash;2026 developments. Personal study notes, not affiliated with Google.
+</footer>
+
+<script src="../assets/app.js"></script>
+
+</body>
+</html>

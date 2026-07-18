@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Auth & identity · Google Security SWE Interview Prep</title>
+<meta name="description" content="OAuth/OIDC/SAML, Kerberos and its named attacks, TPM, MFA comparison, and the 2025 passkey shift.">
+<link rel="stylesheet" href="../assets/style.css">
+
+</head>
+<body>
+
+<nav class="topnav">
+  <a class="brand" href="../index.html"><span class="dot"></span>Security interview prep</a>
+  <div class="topnav-actions">
+    <button class="icon-btn" onclick="toggleTheme()">Theme</button>
+    <button class="icon-btn" onclick="toggleMenu()">Menu</button>
+  </div>
+</nav>
+
+<div class="menu-panel" id="menu-panel">
+  <div class="menu-sheet">
+    <button class="icon-btn menu-close" onclick="toggleMenu()">Close</button>
+    <a href="../index.html" style="font-weight:600;font-size:15px;display:block;margin:4px 0 16px;">Home</a>
+    <h4>Tier 1 — go deep</h4>
+<a href="networking-tls.html">Networking & TLS</a>
+<a href="cryptography.html">Cryptography</a>
+<a href="web-app-security.html">Web app security</a>
+<a href="auth-identity.html" class="active">Auth & identity</a>
+<a href="coding-practice.html">Security-themed coding</a>
+<h4>Tier 2 — working knowledge</h4>
+<a href="threat-modeling.html">Threat modeling (STRIDE tool)</a>
+<a href="cloud-infra-security.html">Cloud & infra security</a>
+<a href="detection-incident-response.html">Detection & incident response</a>
+<h4>Tier 3 — conversational fluency</h4>
+<a href="malware-reversing.html">Malware & reversing</a>
+<a href="exploits-attack-structure.html">Exploits & attack structure</a>
+<a href="digital-forensics.html">Digital forensics</a>
+<h4>Real-world breaches</h4>
+<a href="breaches.html">Breach timeline (hub)</a>
+<a href="breach-diginotar.html">DigiNotar (2011)</a>
+<a href="breach-heartbleed.html">Heartbleed (2014)</a>
+<a href="breach-capital-one.html">Capital One SSRF (2019)</a>
+<a href="breach-solarwinds.html">SolarWinds / Sunburst (2020)</a>
+<a href="breach-log4shell.html">Log4Shell (2021)</a>
+<a href="breach-uber.html">Uber MFA fatigue (2022)</a>
+<a href="breach-xz-utils.html">xz-utils backdoor (2024)</a>
+<h4>Practice tools</h4>
+<a href="flashcards.html">Flashcard deck</a>
+<a href="interview-technique.html">Interview technique cheat sheet</a>
+<a href="resources.html">Sources & further reading</a>
+  </div>
+</div>
+
+<main>
+
+<span class="badge badge-tier1">Tier 1 — go deep</span><h1>Authentication &amp; identity</h1><p class="subtitle">Cookies and sessions, OAuth and OIDC, Kerberos and its named attacks, TPM, MFA comparison, and why passkeys changed the calculus in 2025.</p><h2>Cookies vs sessions</h2><p>Mark auth cookies <code>HttpOnly</code> (blocks JS access, mitigating XSS-based theft), <code>Secure</code> (HTTPS-only transmission), <code>SameSite</code> (mitigates CSRF). Server-side sessions store state keyed by an opaque session ID &mdash; more revocable than a self-contained token.</p><h2>OAuth 2.0 authorization code flow, with PKCE</h2><div class="diagram-wrap"><svg width="100%" viewBox="0 0 680 394" role="img" xmlns="http://www.w3.org/2000/svg"><defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="var(--text-muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs><g class="chain-box"><rect x="170" y="24" width="340" height="56" rx="10" style="stroke:var(--purple)"/><text class="chain-title" x="340" y="48" text-anchor="middle">1. User consents</text><text class="chain-sub" x="340" y="66" text-anchor="middle">Redirected to auth server, logs in, approves scopes</text></g><line class="chain-arrow" x1="340" y1="80" x2="340" y2="112" marker-end="url(#arrow)"/><g class="chain-box"><rect x="170" y="112" width="340" height="56" rx="10" style="stroke:var(--purple)"/><text class="chain-title" x="340" y="136" text-anchor="middle">2. Authorization code issued</text><text class="chain-sub" x="340" y="154" text-anchor="middle">Short-lived code returned to the client's redirect URI</text></g><line class="chain-arrow" x1="340" y1="168" x2="340" y2="200" marker-end="url(#arrow)"/><g class="chain-box"><rect x="170" y="200" width="340" height="56" rx="10" style="stroke:var(--accent)"/><text class="chain-title" x="340" y="224" text-anchor="middle">3. Code exchange (with PKCE)</text><text class="chain-sub" x="340" y="242" text-anchor="middle">Client sends code + verifier to auth server, gets a token</text></g><line class="chain-arrow" x1="340" y1="256" x2="340" y2="288" marker-end="url(#arrow)"/><g class="chain-box"><rect x="170" y="288" width="340" height="56" rx="10" style="stroke:var(--accent)"/><text class="chain-title" x="340" y="312" text-anchor="middle">4. Resource access</text><text class="chain-sub" x="340" y="330" text-anchor="middle">Client calls resource server with the bearer token</text></g><text class="chain-note" x="340" y="370" text-anchor="middle">A stolen bearer token works for anyone who holds it — scope and expiry are the mitigations</text></svg></div><p>OAuth 2.0 is an <strong>authorization</strong> protocol, not authentication &mdash; it grants a bearer token scoped to specific permissions, delegated by a resource owner to a client, without sharing the owner's credentials with that client. PKCE (now standard even for public clients) proves the app exchanging the code is the same one that started the flow, preventing a stolen authorization code from being redeemed by an attacker.</p><p><strong>OpenID Connect</strong> sits on top of OAuth 2.0 to add actual authentication (the ID token, a signed JWT asserting identity). A common interview trap is conflating OAuth with authentication when it's fundamentally an authorization framework.</p><p><strong>SAML vs OIDC</strong>: SAML is XML-based, enterprise/SSO-heavy, older. OIDC is JSON/JWT-based, REST-friendly, dominant for consumer and modern app SSO. Both solve the same federated-identity problem with different wire formats and eras of design.</p><h2>Kerberos</h2><div class="diagram-wrap"><svg width="100%" viewBox="0 0 680 354" role="img" xmlns="http://www.w3.org/2000/svg"><defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="var(--text-muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs><g class="chain-box"><rect x="170" y="24" width="340" height="56" rx="10" style="stroke:var(--accent)"/><text class="chain-title" x="340" y="48" text-anchor="middle">1. Authentication request</text><text class="chain-sub" x="340" y="66" text-anchor="middle">User proves identity once to the Authentication Server (AS)</text></g><line class="chain-arrow" x1="340" y1="80" x2="340" y2="112" marker-end="url(#arrow)"/><g class="chain-box"><rect x="170" y="112" width="340" height="56" rx="10" style="stroke:var(--accent)"/><text class="chain-title" x="340" y="136" text-anchor="middle">2. Ticket Granting Ticket issued</text><text class="chain-sub" x="340" y="154" text-anchor="middle">AS returns a TGT, encrypted with the krbtgt account's key</text></g><line class="chain-arrow" x1="340" y1="168" x2="340" y2="200" marker-end="url(#arrow)"/><g class="chain-box"><rect x="170" y="200" width="340" height="56" rx="10" style="stroke:var(--amber)"/><text class="chain-title" x="340" y="224" text-anchor="middle">3. Service ticket requested</text><text class="chain-sub" x="340" y="242" text-anchor="middle">Client presents the TGT to the Ticket Granting Server (TGS)</text></g><line class="chain-arrow" x1="340" y1="256" x2="340" y2="288" marker-end="url(#arrow)"/><g class="chain-box"><rect x="170" y="288" width="340" height="56" rx="10" style="stroke:var(--amber)"/><text class="chain-title" x="340" y="312" text-anchor="middle">4. Access granted</text><text class="chain-sub" x="340" y="330" text-anchor="middle">TGS issues a service ticket; client never resends the password</text></g></svg></div><p>Ticket-based auth using a trusted third party, the Key Distribution Center (KDC). The two-ticket flow (TGT from the Authentication Server, then a service ticket from the Ticket Granting Server) avoids repeatedly transmitting a password.</p><div class="term"><div class="term-name"><code>Golden ticket</code></div>Forge a TGT by stealing the KDC's krbtgt account hash &mdash; grants domain-wide access. Used in the <a href="../pages/breach-solarwinds.html">SolarWinds intrusion</a> for lateral movement.</div><div class="term"><div class="term-name"><code>Silver ticket</code></div>Forge a service ticket using a stolen service-account hash &mdash; narrower, per-service access, and harder to detect since it doesn't touch the KDC.</div><div class="term"><div class="term-name"><code>Pass-the-hash</code></div>Authenticate using a stolen NTLM hash directly, without ever knowing the plaintext password &mdash; works because NTLM auth only ever needs the hash.</div><h2>TPM</h2><p>Hardware-backed secure storage for keys/certs that never leaves the chip in plaintext &mdash; the root of trust for disk encryption (BitLocker) and platform attestation.</p><h2>MFA comparison &mdash; know the threat model each factor defeats</h2><table><tr><th>Factor</th><th>What breaks it</th></tr><tr><td>SMS OTP</td><td>Weakest &mdash; vulnerable to SIM-swap.</td></tr><tr><td>TOTP apps</td><td>Better, but still phishable via real-time relay / adversary-in-the-middle proxies.</td></tr><tr><td>Push notifications</td><td>Vulnerable to "MFA fatigue" &mdash; spamming approval requests until the user taps accept. See the <a href="../pages/breach-uber.html">Uber breach</a>.</td></tr><tr><td>U2F / FIDO2 hardware keys</td><td>Phishing-resistant by design &mdash; the cryptographic challenge is bound to the origin, so a phishing site cannot complete the handshake.</td></tr></table><h2>2025&ndash;2026 update: passkeys crossed from novelty to default</h2><p>Passkeys (FIDO2/WebAuthn credentials, often synced via a platform keychain) reached mainstream enterprise deployment in 2025; roughly half of surveyed users now have at least one enabled.</p><div class="callout now"><div class="callout-title">NIST SP 800-63-4 (July 2025)</div>Now recognizes synced passkeys as meeting AAL2, and <em>requires</em> phishing-resistant authenticators at that assurance level rather than merely recommending them &mdash; a meaningful regulatory shift. A passkey's private key never leaves the device/secure enclave; authentication is a signed, origin-bound challenge, which is exactly why it resists phishing the same way U2F does.</div><h2>Identity in cloud / service context</h2><p>Service accounts are non-human identities used for automation and should carry least-privilege scopes. Exported service-account keys are a major attacker target because they're long-lived, portable bearer credentials with no built-in rotation. Workload identity federation (short-lived, attested tokens instead of long-lived exported keys) is the modern mitigation &mdash; the right answer if asked how to avoid this risk.</p><h2>Practice questions</h2><ul><li>Why is OAuth 2.0 not, by itself, an authentication protocol?</li><li>What problem does PKCE solve for public clients like mobile apps?</li><li>Why does pass-the-hash work against NTLM but not against a properly implemented challenge-response scheme using salted, non-replayable proofs?</li></ul><div class="pagenav"><a class="" href="web-app-security.html"><div class="dir">Previous</div>Web application security</a><a class="next" href="coding-practice.html"><div class="dir">Next</div>Security-themed coding practice</a></div>
+
+    <div class="check-row" style="margin-top:36px;border-top:1px solid var(--border);border-bottom:none;padding-top:16px;">
+      <input type="checkbox" id="page-complete">
+      <label for="page-complete">Mark this page as studied</label>
+    </div>
+    <script>initPageComplete('auth-identity');</script>
+</main>
+
+<footer>
+  Built from Grace Nolan's Google Security Engineering interview notes, reorganized and updated with 2025&ndash;2026 developments. Personal study notes, not affiliated with Google.
+</footer>
+
+<script src="../assets/app.js"></script>
+
+</body>
+</html>

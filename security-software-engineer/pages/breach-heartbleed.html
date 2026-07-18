@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Heartbleed (2014) · Google Security SWE Interview Prep</title>
+<meta name="description" content="CVE-2014-0160: the exact OpenSSL memory-safety bug that leaked private keys, and why it's the poster child for memory-safe languages.">
+<link rel="stylesheet" href="../assets/style.css">
+
+</head>
+<body>
+
+<nav class="topnav">
+  <a class="brand" href="../index.html"><span class="dot"></span>Security interview prep</a>
+  <div class="topnav-actions">
+    <button class="icon-btn" onclick="toggleTheme()">Theme</button>
+    <button class="icon-btn" onclick="toggleMenu()">Menu</button>
+  </div>
+</nav>
+
+<div class="menu-panel" id="menu-panel">
+  <div class="menu-sheet">
+    <button class="icon-btn menu-close" onclick="toggleMenu()">Close</button>
+    <a href="../index.html" style="font-weight:600;font-size:15px;display:block;margin:4px 0 16px;">Home</a>
+    <h4>Tier 1 — go deep</h4>
+<a href="networking-tls.html">Networking & TLS</a>
+<a href="cryptography.html">Cryptography</a>
+<a href="web-app-security.html">Web app security</a>
+<a href="auth-identity.html">Auth & identity</a>
+<a href="coding-practice.html">Security-themed coding</a>
+<h4>Tier 2 — working knowledge</h4>
+<a href="threat-modeling.html">Threat modeling (STRIDE tool)</a>
+<a href="cloud-infra-security.html">Cloud & infra security</a>
+<a href="detection-incident-response.html">Detection & incident response</a>
+<h4>Tier 3 — conversational fluency</h4>
+<a href="malware-reversing.html">Malware & reversing</a>
+<a href="exploits-attack-structure.html">Exploits & attack structure</a>
+<a href="digital-forensics.html">Digital forensics</a>
+<h4>Real-world breaches</h4>
+<a href="breaches.html">Breach timeline (hub)</a>
+<a href="breach-diginotar.html">DigiNotar (2011)</a>
+<a href="breach-heartbleed.html" class="active">Heartbleed (2014)</a>
+<a href="breach-capital-one.html">Capital One SSRF (2019)</a>
+<a href="breach-solarwinds.html">SolarWinds / Sunburst (2020)</a>
+<a href="breach-log4shell.html">Log4Shell (2021)</a>
+<a href="breach-uber.html">Uber MFA fatigue (2022)</a>
+<a href="breach-xz-utils.html">xz-utils backdoor (2024)</a>
+<h4>Practice tools</h4>
+<a href="flashcards.html">Flashcard deck</a>
+<a href="interview-technique.html">Interview technique cheat sheet</a>
+<a href="resources.html">Sources & further reading</a>
+  </div>
+</div>
+
+<main>
+
+<span class="badge badge-breach">Breach case study</span><span class="badge badge-tier3">2014</span><h1>Heartbleed</h1><p class="subtitle">CVE-2014-0160 — the single most-cited real-world justification for memory-safe languages in security infrastructure.</p><div class="diagram-wrap"><svg width="100%" viewBox="0 0 680 482" role="img" xmlns="http://www.w3.org/2000/svg"><defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="var(--text-muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs><g class="chain-box"><rect x="170" y="24" width="340" height="56" rx="10" style="stroke:var(--red)"/><text class="chain-title" x="340" y="48" text-anchor="middle">1. Heartbeat request sent</text><text class="chain-sub" x="340" y="66" text-anchor="middle">1 byte of real payload, but claims a 64KB length</text></g><line class="chain-arrow" x1="340" y1="80" x2="340" y2="112" marker-end="url(#arrow)"/><g class="chain-box"><rect x="170" y="112" width="340" height="56" rx="10" style="stroke:var(--red)"/><text class="chain-title" x="340" y="136" text-anchor="middle">2. No bounds check on the length</text><text class="chain-sub" x="340" y="154" text-anchor="middle">Server never checks claimed length against bytes received</text></g><line class="chain-arrow" x1="340" y1="168" x2="340" y2="200" marker-end="url(#arrow)"/><g class="chain-box"><rect x="170" y="200" width="340" height="56" rx="10" style="stroke:var(--amber)"/><text class="chain-title" x="340" y="224" text-anchor="middle">3. memcpy reads past the buffer</text><text class="chain-sub" x="340" y="242" text-anchor="middle">Copies claimed length, not actual length, into the reply</text></g><line class="chain-arrow" x1="340" y1="256" x2="340" y2="288" marker-end="url(#arrow)"/><g class="chain-box"><rect x="170" y="288" width="340" height="56" rx="10" style="stroke:var(--amber)"/><text class="chain-title" x="340" y="312" text-anchor="middle">4. Adjacent heap memory leaked</text><text class="chain-sub" x="340" y="330" text-anchor="middle">Whatever was recently in that memory region is returned</text></g><line class="chain-arrow" x1="340" y1="344" x2="340" y2="376" marker-end="url(#arrow)"/><g class="chain-box"><rect x="170" y="376" width="340" height="56" rx="10" style="stroke:var(--purple)"/><text class="chain-title" x="340" y="400" text-anchor="middle">5. Repeated probing extracts secrets</text><text class="chain-sub" x="340" y="418" text-anchor="middle">Private keys, session cookies, credentials, over many tries</text></g><text class="chain-note" x="340" y="458" text-anchor="middle">A read-only bug — nothing crashes, so it left no trace to detect it</text></svg></div><p>A Google engineer found it, and it's Google's own push toward memory-safe languages that this bug is most often cited to justify.</p><h2>The mechanism</h2><p>The TLS heartbeat extension (RFC 6520) exists to keep a connection alive and confirm the peer is still there without a full renegotiation. The client sends a payload and a length field; the server is supposed to echo back exactly that payload. OpenSSL's implementation read the 2-byte length field straight out of attacker-controlled input, then called <code>memcpy(bp, pl, payload)</code>, copying <code>payload</code> bytes starting at the pointer to the client's data &mdash; without checking that <code>payload</code> actually matched the number of bytes the client had sent.</p><p>A client could send one byte of real data but claim the length was 65535, and the server would <code>memcpy</code> 64KB starting at that one-byte pointer, reading straight past the end of the real payload into whatever else happened to be sitting in adjacent heap memory, then hand all of it back in the response.</p><div class="callout danger"><div class="callout-title">Why private keys specifically</div>OpenSSL's heap arena gets reused constantly across connections — recently freed buffers holding other users' request data, session keys, and, if the memory layout happened to line up, the server's own long-term private key structure. It's probabilistic per request, which is why exploitation looked like repeated automated probing. Cloudflare ran an open challenge in April 2014 daring researchers to pull a private key out of a deliberately vulnerable nginx box — two independent researchers succeeded within hours.</div><h2>Read vs write, and why that distinction matters</h2><p>This is an out-of-bounds <em>read</em>, not a write &mdash; no return address or control data got corrupted, so there's no code execution here, only information disclosure. Not every memory-safety bug is RCE-flavored: over-reads leak confidentiality, over-writes threaten integrity and control flow, and they call for different mitigations.</p><h2>Two years of silence</h2><p>The code had shipped in OpenSSL 1.0.1 back in March 2012, and sat there for over two years before a Google security engineer found it during a line-by-line audit of OpenSSL prompted by two earlier SSL bugs. This bug produced no crash, no corrupted state, nothing that would show up in a crash-monitoring dashboard &mdash; there is no way to retroactively prove whether it was quietly exploited by a well-resourced adversary before public disclosure in April 2014. A vulnerability class that's silent by construction is a much harder detection problem than one that trips an alert.</p><h2>Forward secrecy nuance</h2><p>If a server used ephemeral ECDHE and its long-term private key later leaked via Heartbleed, past recorded sessions were still safe &mdash; forward secrecy's whole point is that stealing the long-term key after the fact doesn't unlock previously captured traffic. What it doesn't protect is the live session running at the moment of compromise, since the plaintext or session key for that connection could itself be sitting in the same leaked memory. See the full explanation on the <a href="../pages/networking-tls.html">networking &amp; TLS page</a>.</p><h2>The throughline to today</h2><div class="callout now"><div class="callout-title">Memory-safe languages</div>A missing bounds check in hand-written C is structurally impossible to write the same way in Rust — slice access is bounds-checked at runtime and panics rather than reading adjacent memory. That's precisely the class of bug (silent over-read, not RCE via corruption) that Google's Rust-in-Android push is built to eliminate by construction rather than catch through review. Full detail on the <a href="../pages/cloud-infra-security.html">cloud &amp; infra security page</a>.</div><div class="pagenav"><a class="" href="breach-diginotar.html"><div class="dir">Previous</div>DigiNotar CA breach (2011)</a><a class="next" href="breach-capital-one.html"><div class="dir">Next</div>Capital One SSRF breach (2019)</a></div>
+
+    <div class="check-row" style="margin-top:36px;border-top:1px solid var(--border);border-bottom:none;padding-top:16px;">
+      <input type="checkbox" id="page-complete">
+      <label for="page-complete">Mark this page as studied</label>
+    </div>
+    <script>initPageComplete('breach-heartbleed');</script>
+</main>
+
+<footer>
+  Built from Grace Nolan's Google Security Engineering interview notes, reorganized and updated with 2025&ndash;2026 developments. Personal study notes, not affiliated with Google.
+</footer>
+
+<script src="../assets/app.js"></script>
+
+</body>
+</html>

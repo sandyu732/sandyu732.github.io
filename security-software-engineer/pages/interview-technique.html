@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Interview technique cheat sheet · Google Security SWE Interview Prep</title>
+<meta name="description" content="The per-question checklist, depth vs breadth framing, and current Google loop structure for 2026.">
+<link rel="stylesheet" href="../assets/style.css">
+
+</head>
+<body>
+
+<nav class="topnav">
+  <a class="brand" href="../index.html"><span class="dot"></span>Security interview prep</a>
+  <div class="topnav-actions">
+    <button class="icon-btn" onclick="toggleTheme()">Theme</button>
+    <button class="icon-btn" onclick="toggleMenu()">Menu</button>
+  </div>
+</nav>
+
+<div class="menu-panel" id="menu-panel">
+  <div class="menu-sheet">
+    <button class="icon-btn menu-close" onclick="toggleMenu()">Close</button>
+    <a href="../index.html" style="font-weight:600;font-size:15px;display:block;margin:4px 0 16px;">Home</a>
+    <h4>Tier 1 — go deep</h4>
+<a href="networking-tls.html">Networking & TLS</a>
+<a href="cryptography.html">Cryptography</a>
+<a href="web-app-security.html">Web app security</a>
+<a href="auth-identity.html">Auth & identity</a>
+<a href="coding-practice.html">Security-themed coding</a>
+<h4>Tier 2 — working knowledge</h4>
+<a href="threat-modeling.html">Threat modeling (STRIDE tool)</a>
+<a href="cloud-infra-security.html">Cloud & infra security</a>
+<a href="detection-incident-response.html">Detection & incident response</a>
+<h4>Tier 3 — conversational fluency</h4>
+<a href="malware-reversing.html">Malware & reversing</a>
+<a href="exploits-attack-structure.html">Exploits & attack structure</a>
+<a href="digital-forensics.html">Digital forensics</a>
+<h4>Real-world breaches</h4>
+<a href="breaches.html">Breach timeline (hub)</a>
+<a href="breach-diginotar.html">DigiNotar (2011)</a>
+<a href="breach-heartbleed.html">Heartbleed (2014)</a>
+<a href="breach-capital-one.html">Capital One SSRF (2019)</a>
+<a href="breach-solarwinds.html">SolarWinds / Sunburst (2020)</a>
+<a href="breach-log4shell.html">Log4Shell (2021)</a>
+<a href="breach-uber.html">Uber MFA fatigue (2022)</a>
+<a href="breach-xz-utils.html">xz-utils backdoor (2024)</a>
+<h4>Practice tools</h4>
+<a href="flashcards.html">Flashcard deck</a>
+<a href="interview-technique.html" class="active">Interview technique cheat sheet</a>
+<a href="resources.html">Sources & further reading</a>
+  </div>
+</div>
+
+<main>
+
+<span class="badge badge-tool">Practice tool</span><h1>Interview technique cheat sheet</h1><p class="subtitle">Distilled from the original interview notes this whole site is built on. This matters as much as domain knowledge.</p><h2>Per-question checklist</h2><ol><li>Listen fully, take notes on the question.</li><li><strong>Repeat the question back</strong> &mdash; checks understanding, buys thinking time. <em>"Let me repeat that back to make sure I've got it&hellip;"</em></li><li><strong>Ask clarifying questions</strong> even if you think you know the answer &mdash; nuance often changes the right approach.</li><li><strong>State your assumptions explicitly</strong> &mdash; <em>"I'll assume we're collecting X/Y/Z logs and retaining them 90 days&hellip;"</em> The interviewer will correct you if it's unreasonable, and that's useful signal either way.</li><li><strong>Narrate your thinking continuously.</strong> The interviewer can only evaluate what you say, not what you silently know. If stuck: <em>"I don't know exactly, but if I had to invent it, it would look like&hellip;"</em> or <em>"I know a related area well &mdash; can I talk about that instead?"</em></li><li>For system-design/security-design prompts: draw the architecture, mark trust boundaries, apply STRIDE out loud.</li><li>For coding: write pseudocode first, state complexity, write your own test cases before running them mentally against your solution.</li><li>Close by asking your interviewer a prepared question &mdash; asking about "the worst parts of the job" is genuinely good; it signals confidence and gets you real signal back.</li></ol><h2>Interviewers test two different things</h2><div class="term"><div class="term-name"><code>Depth</code></div>There will be questions about technical details to the point where it'll be hard to answer. That's okay &mdash; try your best to work through it and say what you're thinking. Interviewers often aren't looking for one specific answer; they want to see how deeply you know a topic. Approach from a low level, and check with your interviewer if you need to add more detail before moving on.</div><div class="term"><div class="term-name"><code>Breadth</code></div>There will be questions related to the role, and some that aren't &mdash; this explores range. Explore the scenario, ask questions, and say your thinking aloud; you might be on the right track even when it doesn't feel like it.</div><h2>The current Google loop (2026)</h2><p>Google's interview process has changed since the underlying study notes were written. As of 2026: a return to in-person interviews to counter AI-assisted cheating, a pre-loop "Google Hiring Assessment" screen, and more AI/ML system design questions woven into onsite loops. A Security Engineering onsite typically runs up to ~6 rounds of 45&ndash;60 minutes: coding/data structures, one or two system-design-style rounds (often with a security angle &mdash; "design a secure X"), and a Googleyness/Leadership behavioral round. Confirm your specific loop structure with your recruiter.</p><div class="callout tip"><div class="callout-title">The core principle</div>Interviewers are potential friends and they want to help you get the job — they are on your side. Let them help you, ask them questions, recite everything you know on a topic, and say your thought process out loud.</div><div class="pagenav"><a class="" href="flashcards.html"><div class="dir">Previous</div>Flashcard deck</a><a class="next" href="resources.html"><div class="dir">Next</div>Sources & further reading</a></div>
+
+    <div class="check-row" style="margin-top:36px;border-top:1px solid var(--border);border-bottom:none;padding-top:16px;">
+      <input type="checkbox" id="page-complete">
+      <label for="page-complete">Mark this page as studied</label>
+    </div>
+    <script>initPageComplete('interview-technique');</script>
+</main>
+
+<footer>
+  Built from Grace Nolan's Google Security Engineering interview notes, reorganized and updated with 2025&ndash;2026 developments. Personal study notes, not affiliated with Google.
+</footer>
+
+<script src="../assets/app.js"></script>
+
+</body>
+</html>

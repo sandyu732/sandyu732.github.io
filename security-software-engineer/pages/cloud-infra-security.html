@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cloud & infrastructure security · Google Security SWE Interview Prep</title>
+<meta name="description" content="Container vs VM isolation, BeyondCorp/Beyond Zero, cloud lateral movement, supply chain attacks, and Rust memory safety.">
+<link rel="stylesheet" href="../assets/style.css">
+
+</head>
+<body>
+
+<nav class="topnav">
+  <a class="brand" href="../index.html"><span class="dot"></span>Security interview prep</a>
+  <div class="topnav-actions">
+    <button class="icon-btn" onclick="toggleTheme()">Theme</button>
+    <button class="icon-btn" onclick="toggleMenu()">Menu</button>
+  </div>
+</nav>
+
+<div class="menu-panel" id="menu-panel">
+  <div class="menu-sheet">
+    <button class="icon-btn menu-close" onclick="toggleMenu()">Close</button>
+    <a href="../index.html" style="font-weight:600;font-size:15px;display:block;margin:4px 0 16px;">Home</a>
+    <h4>Tier 1 — go deep</h4>
+<a href="networking-tls.html">Networking & TLS</a>
+<a href="cryptography.html">Cryptography</a>
+<a href="web-app-security.html">Web app security</a>
+<a href="auth-identity.html">Auth & identity</a>
+<a href="coding-practice.html">Security-themed coding</a>
+<h4>Tier 2 — working knowledge</h4>
+<a href="threat-modeling.html">Threat modeling (STRIDE tool)</a>
+<a href="cloud-infra-security.html" class="active">Cloud & infra security</a>
+<a href="detection-incident-response.html">Detection & incident response</a>
+<h4>Tier 3 — conversational fluency</h4>
+<a href="malware-reversing.html">Malware & reversing</a>
+<a href="exploits-attack-structure.html">Exploits & attack structure</a>
+<a href="digital-forensics.html">Digital forensics</a>
+<h4>Real-world breaches</h4>
+<a href="breaches.html">Breach timeline (hub)</a>
+<a href="breach-diginotar.html">DigiNotar (2011)</a>
+<a href="breach-heartbleed.html">Heartbleed (2014)</a>
+<a href="breach-capital-one.html">Capital One SSRF (2019)</a>
+<a href="breach-solarwinds.html">SolarWinds / Sunburst (2020)</a>
+<a href="breach-log4shell.html">Log4Shell (2021)</a>
+<a href="breach-uber.html">Uber MFA fatigue (2022)</a>
+<a href="breach-xz-utils.html">xz-utils backdoor (2024)</a>
+<h4>Practice tools</h4>
+<a href="flashcards.html">Flashcard deck</a>
+<a href="interview-technique.html">Interview technique cheat sheet</a>
+<a href="resources.html">Sources & further reading</a>
+  </div>
+</div>
+
+<main>
+
+<span class="badge badge-tier2">Tier 2 — working knowledge</span><h1>Cloud &amp; infrastructure security</h1><p class="subtitle">Isolation boundaries, zero trust, cloud lateral movement, supply chain attacks, and memory safety as an infrastructure strategy.</p><h2>Isolation boundaries</h2><div class="diagram-wrap"><svg width="100%" viewBox="0 0 680 210" role="img" xmlns="http://www.w3.org/2000/svg"><rect x="20" y="20" width="300" height="170" rx="12" style="fill:var(--surface-2);stroke:var(--accent);stroke-width:1.5"/><text class="chain-title" x="170" y="48" text-anchor="middle" style="fill:var(--accent)">Virtual machine</text><text class="chain-sub" x="38" y="78" text-anchor="start">- Hypervisor-level isolation</text><text class="chain-sub" x="38" y="108" text-anchor="start">- Own kernel per VM</text><text class="chain-sub" x="38" y="138" text-anchor="start">- Stronger boundary</text><text class="chain-sub" x="38" y="168" text-anchor="start">- Escape = hypervisor bug</text><rect x="360" y="20" width="300" height="170" rx="12" style="fill:var(--surface-2);stroke:var(--purple);stroke-width:1.5"/><text class="chain-title" x="510" y="48" text-anchor="middle" style="fill:var(--purple)">Container</text><text class="chain-sub" x="378" y="78" text-anchor="start">- Namespace/cgroup isolation</text><text class="chain-sub" x="378" y="108" text-anchor="start">- Shares host kernel</text><text class="chain-sub" x="378" y="138" text-anchor="start">- Materially weaker boundary</text><text class="chain-sub" x="378" y="168" text-anchor="start">- Escape = kernel bug or misconfig</text></svg></div><p>Containers share the host kernel &mdash; a weaker isolation boundary than a hypervisor, which is why container escapes matter more than VM escapes in threat modeling. Common escape vectors: shared kernel vulnerabilities, misconfigured privileged containers, host-path/volume mounts exposing the host filesystem.</p><h2>BeyondCorp / zero trust</h2><p>The core inversion: trust the device and identity, not the network. No more privileged internal network &mdash; every request is authenticated and authorized regardless of source, replacing perimeter VPN trust.</p><div class="callout now"><div class="callout-title">2025–2026 update: "Beyond Zero"</div>Google's evolution of BeyondCorp extends the identity-centric approach with real-time, per-action reasoning, because the original assumptions (accessors are human, actions happen at human speed, the application is the right trust boundary) break down when AI agents can issue orders of magnitude more requests than a human. The trust boundary shifts from "the application" to "the specific action on a specific piece of data, evaluated in the moment," not reviewed after the fact.</div><h2>Lateral movement &amp; privilege escalation in cloud</h2><p>Exported/over-scoped service account keys, IAM role chaining (a compromised low-privilege identity assumes a more privileged role due to a misconfigured trust policy), and &mdash; very current &mdash; workload-identity misconfigurations letting a compromised pod assume cloud IAM roles far beyond what the workload needs. See the <a href="../pages/breach-capital-one.html">Capital One breach</a> for the canonical example: an over-scoped role turned one SSRF bug into 106 million stolen records. Container-based lateral movement and service-account token theft are both active, not historical, risk classes in current cloud environments.</p><h2>Supply chain security</h2><p>Two case studies worth knowing cold:</p><div class="term"><div class="term-name"><code>SolarWinds / Sunburst (2020)</code></div>A trojanized update to Orion software, signed and distributed through the legitimate build pipeline, then Kerberos golden tickets used for lateral movement inside victim networks. Full write-up on the <a href="../pages/breach-solarwinds.html">breach page</a>.</div><div class="term"><div class="term-name"><code>xz-utils backdoor (2024)</code></div>A two-year social-engineering campaign earned commit access to a widely-depended-upon compression library, then hid a backdoor in the build system targeting sshd. Caught by chance, not process. Full write-up on the <a href="../pages/breach-xz-utils.html">breach page</a>.</div><p>Both incidents show a compromise of the build/trust pipeline, not the source code review process. Lessons: build-system/CI supply chain is as much an attack surface as source code; maintainer burnout/succession in critical open-source infrastructure is a systemic risk; reproducible builds and provenance attestation (in-toto, SLSA) are the direct mitigations pushed since.</p><h2>Memory safety as an infrastructure-security strategy</h2><div class="stat-row"><div class="stat"><div class="num">223 &rarr; &lt;50</div><div class="lbl">Android memory-safety vulns, 2019 &rarr; 2024</div></div><div class="stat"><div class="num">&lt;20%</div><div class="lbl">Share of Android vulns that are memory-safety, 2025</div></div><div class="stat"><div class="num">~1000&times;</div><div class="lbl">Reduction in vuln density, Rust vs equivalent C/C++</div></div></div><p>Google's push to migrate Android (and expanding into Chromium parsers, firmware, and more) to Rust has driven this shift. Good example to cite if asked "how would you reduce a class of vulnerabilities at scale" &mdash; the answer isn't "review harder," it's "change the language so the bug class becomes structurally rare."</p><div class="callout"><div class="callout-title">The nuance</div>Rust doesn't eliminate all memory-safety-adjacent risk. Google's own near-miss with a buffer overflow in a Rust image-decoding component (CrabbyAVIF) is worth knowing: safety is a spectrum, and unsafe blocks / logic errors still exist. See the <a href="../pages/breach-heartbleed.html">Heartbleed</a> page for the C-era bug this strategy is designed to prevent.</div><div class="pagenav"><a class="" href="threat-modeling.html"><div class="dir">Previous</div>Threat modeling</a><a class="next" href="detection-incident-response.html"><div class="dir">Next</div>Detection & incident response</a></div>
+
+    <div class="check-row" style="margin-top:36px;border-top:1px solid var(--border);border-bottom:none;padding-top:16px;">
+      <input type="checkbox" id="page-complete">
+      <label for="page-complete">Mark this page as studied</label>
+    </div>
+    <script>initPageComplete('cloud-infra-security');</script>
+</main>
+
+<footer>
+  Built from Grace Nolan's Google Security Engineering interview notes, reorganized and updated with 2025&ndash;2026 developments. Personal study notes, not affiliated with Google.
+</footer>
+
+<script src="../assets/app.js"></script>
+
+</body>
+</html>

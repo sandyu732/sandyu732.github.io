@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sources & further reading · Google Security SWE Interview Prep</title>
+<meta name="description" content="Every source used to build and fact-check this interview prep site.">
+<link rel="stylesheet" href="../assets/style.css">
+
+</head>
+<body>
+
+<nav class="topnav">
+  <a class="brand" href="../index.html"><span class="dot"></span>Security interview prep</a>
+  <div class="topnav-actions">
+    <button class="icon-btn" onclick="toggleTheme()">Theme</button>
+    <button class="icon-btn" onclick="toggleMenu()">Menu</button>
+  </div>
+</nav>
+
+<div class="menu-panel" id="menu-panel">
+  <div class="menu-sheet">
+    <button class="icon-btn menu-close" onclick="toggleMenu()">Close</button>
+    <a href="../index.html" style="font-weight:600;font-size:15px;display:block;margin:4px 0 16px;">Home</a>
+    <h4>Tier 1 — go deep</h4>
+<a href="networking-tls.html">Networking & TLS</a>
+<a href="cryptography.html">Cryptography</a>
+<a href="web-app-security.html">Web app security</a>
+<a href="auth-identity.html">Auth & identity</a>
+<a href="coding-practice.html">Security-themed coding</a>
+<h4>Tier 2 — working knowledge</h4>
+<a href="threat-modeling.html">Threat modeling (STRIDE tool)</a>
+<a href="cloud-infra-security.html">Cloud & infra security</a>
+<a href="detection-incident-response.html">Detection & incident response</a>
+<h4>Tier 3 — conversational fluency</h4>
+<a href="malware-reversing.html">Malware & reversing</a>
+<a href="exploits-attack-structure.html">Exploits & attack structure</a>
+<a href="digital-forensics.html">Digital forensics</a>
+<h4>Real-world breaches</h4>
+<a href="breaches.html">Breach timeline (hub)</a>
+<a href="breach-diginotar.html">DigiNotar (2011)</a>
+<a href="breach-heartbleed.html">Heartbleed (2014)</a>
+<a href="breach-capital-one.html">Capital One SSRF (2019)</a>
+<a href="breach-solarwinds.html">SolarWinds / Sunburst (2020)</a>
+<a href="breach-log4shell.html">Log4Shell (2021)</a>
+<a href="breach-uber.html">Uber MFA fatigue (2022)</a>
+<a href="breach-xz-utils.html">xz-utils backdoor (2024)</a>
+<h4>Practice tools</h4>
+<a href="flashcards.html">Flashcard deck</a>
+<a href="interview-technique.html">Interview technique cheat sheet</a>
+<a href="resources.html" class="active">Sources & further reading</a>
+  </div>
+</div>
+
+<main>
+
+<span class="badge badge-tool">Practice tool</span><h1>Sources &amp; further reading</h1><p class="subtitle">Everything this site is built from and verified against.</p><ul><li><a href="https://github.com/gracenolan/Notes/blob/master/interview-study-notes-for-security-engineering.md">Grace Nolan's original Google Security Engineering interview notes</a> &mdash; the base source for this entire site.</li><li><a href="https://www.nist.gov/news-events/news/2024/08/nist-releases-first-3-finalized-post-quantum-encryption-standards">NIST &mdash; first 3 finalized post-quantum encryption standards (FIPS 203/204/205)</a></li><li><a href="https://security.googleblog.com/2025/11/rust-in-android-move-fast-fix-things.html">Google Security Blog &mdash; Rust in Android: move fast and fix things (2025)</a></li><li><a href="https://arxiv.org/html/2504.17473v1">Wolves in the Repository &mdash; software engineering analysis of the xz-utils supply chain attack</a></li><li><a href="https://research.google/pubs/beyondcorp-and-the-long-tail-of-zero-trust/">Google Research &mdash; BeyondCorp and the long tail of Zero Trust</a></li><li><a href="https://www.mend.io/blog/2025-owasp-top-10-for-llm-applications-a-quick-guide/">OWASP Top 10 for LLM Applications 2025 &mdash; overview</a></li><li><a href="https://english.ncsc.nl/publications/publications/2021/january/19/it-security-guidelines-for-transport-layer-security-2.1">Dutch NCSC &mdash; IT Security Guidelines for Transport Layer Security</a> (still a strong TLS primer)</li><li><a href="https://attack.mitre.org/">MITRE ATT&amp;CK framework</a></li><li><a href="https://www.huntress.com/threat-library/data-breach/capital-one-data-breach">Huntress &mdash; Capital One Data Breach</a></li><li><a href="https://krebsonsecurity.com/2019/08/what-we-can-learn-from-the-capital-one-hack/">Krebs on Security &mdash; What We Can Learn from the Capital One Hack</a></li><li><a href="https://en.wikipedia.org/wiki/DigiNotar">Wikipedia &mdash; DigiNotar</a></li><li><a href="https://www.eff.org/deeplinks/2011/09/post-mortem-iranian-diginotar-attack">EFF &mdash; A Post Mortem on the Iranian DigiNotar Attack</a></li><li><a href="https://en.wikipedia.org/wiki/Heartbleed">Wikipedia &mdash; Heartbleed</a></li><li><a href="https://blog.cloudflare.com/answering-the-critical-question-can-you-get-private-ssl-keys-using-heartbleed/">Cloudflare &mdash; Can You Get Private SSL Keys Using Heartbleed?</a></li></ul><div class="callout"><div class="callout-title">A note on currency</div>This site was built in July 2026. Security moves fast — re-verify anything time-sensitive (loop structure, current CVEs, standards status) against your recruiter and primary sources closer to your actual interview date.</div><div class="pagenav"><a class="" href="interview-technique.html"><div class="dir">Previous</div>Interview technique cheat sheet</a><span></span></div>
+
+    <div class="check-row" style="margin-top:36px;border-top:1px solid var(--border);border-bottom:none;padding-top:16px;">
+      <input type="checkbox" id="page-complete">
+      <label for="page-complete">Mark this page as studied</label>
+    </div>
+    <script>initPageComplete('resources');</script>
+</main>
+
+<footer>
+  Built from Grace Nolan's Google Security Engineering interview notes, reorganized and updated with 2025&ndash;2026 developments. Personal study notes, not affiliated with Google.
+</footer>
+
+<script src="../assets/app.js"></script>
+
+</body>
+</html>

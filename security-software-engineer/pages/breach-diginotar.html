@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DigiNotar CA breach (2011) · Google Security SWE Interview Prep</title>
+<meta name="description" content="How a compromised certificate authority issued fraudulent Google certificates, and why Certificate Transparency exists because of it.">
+<link rel="stylesheet" href="../assets/style.css">
+
+</head>
+<body>
+
+<nav class="topnav">
+  <a class="brand" href="../index.html"><span class="dot"></span>Security interview prep</a>
+  <div class="topnav-actions">
+    <button class="icon-btn" onclick="toggleTheme()">Theme</button>
+    <button class="icon-btn" onclick="toggleMenu()">Menu</button>
+  </div>
+</nav>
+
+<div class="menu-panel" id="menu-panel">
+  <div class="menu-sheet">
+    <button class="icon-btn menu-close" onclick="toggleMenu()">Close</button>
+    <a href="../index.html" style="font-weight:600;font-size:15px;display:block;margin:4px 0 16px;">Home</a>
+    <h4>Tier 1 — go deep</h4>
+<a href="networking-tls.html">Networking & TLS</a>
+<a href="cryptography.html">Cryptography</a>
+<a href="web-app-security.html">Web app security</a>
+<a href="auth-identity.html">Auth & identity</a>
+<a href="coding-practice.html">Security-themed coding</a>
+<h4>Tier 2 — working knowledge</h4>
+<a href="threat-modeling.html">Threat modeling (STRIDE tool)</a>
+<a href="cloud-infra-security.html">Cloud & infra security</a>
+<a href="detection-incident-response.html">Detection & incident response</a>
+<h4>Tier 3 — conversational fluency</h4>
+<a href="malware-reversing.html">Malware & reversing</a>
+<a href="exploits-attack-structure.html">Exploits & attack structure</a>
+<a href="digital-forensics.html">Digital forensics</a>
+<h4>Real-world breaches</h4>
+<a href="breaches.html">Breach timeline (hub)</a>
+<a href="breach-diginotar.html" class="active">DigiNotar (2011)</a>
+<a href="breach-heartbleed.html">Heartbleed (2014)</a>
+<a href="breach-capital-one.html">Capital One SSRF (2019)</a>
+<a href="breach-solarwinds.html">SolarWinds / Sunburst (2020)</a>
+<a href="breach-log4shell.html">Log4Shell (2021)</a>
+<a href="breach-uber.html">Uber MFA fatigue (2022)</a>
+<a href="breach-xz-utils.html">xz-utils backdoor (2024)</a>
+<h4>Practice tools</h4>
+<a href="flashcards.html">Flashcard deck</a>
+<a href="interview-technique.html">Interview technique cheat sheet</a>
+<a href="resources.html">Sources & further reading</a>
+  </div>
+</div>
+
+<main>
+
+<span class="badge badge-breach">Breach case study</span><span class="badge badge-tier3">2011</span><h1>DigiNotar CA breach</h1><p class="subtitle">How a compromised certificate authority silently undermined the trust model behind every HTTPS connection on the internet.</p><div class="diagram-wrap"><svg width="100%" viewBox="0 0 680 482" role="img" xmlns="http://www.w3.org/2000/svg"><defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="var(--text-muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs><g class="chain-box"><rect x="170" y="24" width="340" height="56" rx="10" style="stroke:var(--red)"/><text class="chain-title" x="340" y="48" text-anchor="middle">1. Outer network breached</text><text class="chain-sub" x="340" y="66" text-anchor="middle">June 17, 2011 — initial foothold on public-facing systems</text></g><line class="chain-arrow" x1="340" y1="80" x2="340" y2="112" marker-end="url(#arrow)"/><g class="chain-box"><rect x="170" y="112" width="340" height="56" rx="10" style="stroke:var(--red)"/><text class="chain-title" x="340" y="136" text-anchor="middle">2. Tunnels into the CA network</text><text class="chain-sub" x="340" y="154" text-anchor="middle">One admin account reached all 8 certificate servers</text></g><line class="chain-arrow" x1="340" y1="168" x2="340" y2="200" marker-end="url(#arrow)"/><g class="chain-box"><rect x="170" y="200" width="340" height="56" rx="10" style="stroke:var(--amber)"/><text class="chain-title" x="340" y="224" text-anchor="middle">3. 531 rogue certificates issued</text><text class="chain-sub" x="340" y="242" text-anchor="middle">Including a wildcard for google.com, Yahoo, Tor Project</text></g><line class="chain-arrow" x1="340" y1="256" x2="340" y2="288" marker-end="url(#arrow)"/><g class="chain-box"><rect x="170" y="288" width="340" height="56" rx="10" style="stroke:var(--amber)"/><text class="chain-title" x="340" y="312" text-anchor="middle">4. MITM against Iranian users</text><text class="chain-sub" x="340" y="330" text-anchor="middle">About 300,000 users' Gmail traffic silently intercepted</text></g><line class="chain-arrow" x1="340" y1="344" x2="340" y2="376" marker-end="url(#arrow)"/><g class="chain-box"><rect x="170" y="376" width="340" height="56" rx="10" style="stroke:var(--accent)"/><text class="chain-title" x="340" y="400" text-anchor="middle">5. Caught by certificate pinning</text><text class="chain-sub" x="340" y="418" text-anchor="middle">Chrome's hardcoded pin for Google's real cert flagged the fake</text></g><text class="chain-note" x="340" y="458" text-anchor="middle">The CA trust model itself never caught this — an independent layer did</text></svg></div><p>The attacker went by ComodoHacker &mdash; the same identity behind an earlier, partially failed attempt against a Comodo registration authority months earlier. What makes DigiNotar the canonical PKI failure example isn't just that a CA got hacked; it's that once inside, the attacker had almost no resistance.</p><h2>Why it worked</h2><p>DigiNotar's network was segmented in name only. The "Secure-net" segment holding the actual CA signing servers was supposed to be unreachable from the internet, but the attacker tunneled through already-compromised systems to reach it about two weeks after the initial breach. Once there, a single admin account had access to all eight certificate servers &mdash; no separation between them, several systems had no antivirus, and there was no central logging to notice any of this happening.</p><div class="callout danger"><div class="callout-title">The real lesson</div>PKI's security model assumes the CA's signing infrastructure is a hardened, monitored, least-privilege environment, and DigiNotar's wasn't. The cryptography around certificate issuance was never broken; the operational security around who could invoke it was.</div><h2>The trust model failure</h2><p>Any of the hundreds of CAs a browser trusts by default can, if compromised, mint a certificate for any domain, and every other client has no way to tell it apart from the real one just by checking the chain and signature. Verification up the chain (leaf &rarr; intermediate &rarr; root) only proves a certificate was signed by <em>some</em> trusted CA &mdash; it says nothing about whether that CA should have issued that particular certificate.</p><p>What actually caught it was independent of PKI entirely: Google had hardcoded, or "pinned," what Google's real certificate looked like inside Chrome. When Chrome encountered the rogue one it refused it outright, and a confused user posting about the error on a help forum unraveled the whole thing. Revocation lists and OCSP wouldn't have helped &mdash; those only work once someone already suspects a problem and checks; pinning caught a problem nobody yet knew existed.</p><h2>What changed because of this</h2><p><strong>Certificate Transparency</strong> exists specifically because of this incident (and the earlier Comodo one). CT requires certificates to be logged in public, append-only, cryptographically verifiable logs before browsers will trust them &mdash; a CA silently mis-issuing a certificate for google.com is now detectable within hours by monitoring the logs. Chrome has required CT log inclusion (via embedded SCTs) for all publicly trusted certificates since 2018.</p><p>Pinning (and its short-lived successor HPKP) was the stopgap before CT matured, and has largely been retired in favor of CT precisely because pinning is brittle &mdash; get it wrong and you lock legitimate users out of your own site. Browsers and OS vendors permanently removed DigiNotar from their root stores, and the company was bankrupt within about a month.</p><h2>Interview framing</h2><div class="callout now"><div class="callout-title">"What happens when a CA is compromised, and how would you design around that risk?"</div>Don't rely on the trust chain alone being valid &mdash; assume any single CA can fail, and layer independent detection on top, which is exactly what CT and monitoring services (crt.sh, cert transparency alerting) do today for any domain you care about.</div><p>See the full crypto/PKI concepts on the <a href="../pages/cryptography.html">cryptography page</a>.</p><div class="pagenav"><a class="" href="breaches.html"><div class="dir">Previous</div>Real-world breach timeline</a><a class="next" href="breach-heartbleed.html"><div class="dir">Next</div>Heartbleed (2014)</a></div>
+
+    <div class="check-row" style="margin-top:36px;border-top:1px solid var(--border);border-bottom:none;padding-top:16px;">
+      <input type="checkbox" id="page-complete">
+      <label for="page-complete">Mark this page as studied</label>
+    </div>
+    <script>initPageComplete('breach-diginotar');</script>
+</main>
+
+<footer>
+  Built from Grace Nolan's Google Security Engineering interview notes, reorganized and updated with 2025&ndash;2026 developments. Personal study notes, not affiliated with Google.
+</footer>
+
+<script src="../assets/app.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flashcard deck · Google Security SWE Interview Prep</title>
+<meta name="description" content="18-card spaced-repetition flashcard deck covering crypto, web app security, auth, threat modeling, and cloud infra terms.">
+<link rel="stylesheet" href="../assets/style.css">
+
+</head>
+<body>
+
+<nav class="topnav">
+  <a class="brand" href="../index.html"><span class="dot"></span>Security interview prep</a>
+  <div class="topnav-actions">
+    <button class="icon-btn" onclick="toggleTheme()">Theme</button>
+    <button class="icon-btn" onclick="toggleMenu()">Menu</button>
+  </div>
+</nav>
+
+<div class="menu-panel" id="menu-panel">
+  <div class="menu-sheet">
+    <button class="icon-btn menu-close" onclick="toggleMenu()">Close</button>
+    <a href="../index.html" style="font-weight:600;font-size:15px;display:block;margin:4px 0 16px;">Home</a>
+    <h4>Tier 1 — go deep</h4>
+<a href="networking-tls.html">Networking & TLS</a>
+<a href="cryptography.html">Cryptography</a>
+<a href="web-app-security.html">Web app security</a>
+<a href="auth-identity.html">Auth & identity</a>
+<a href="coding-practice.html">Security-themed coding</a>
+<h4>Tier 2 — working knowledge</h4>
+<a href="threat-modeling.html">Threat modeling (STRIDE tool)</a>
+<a href="cloud-infra-security.html">Cloud & infra security</a>
+<a href="detection-incident-response.html">Detection & incident response</a>
+<h4>Tier 3 — conversational fluency</h4>
+<a href="malware-reversing.html">Malware & reversing</a>
+<a href="exploits-attack-structure.html">Exploits & attack structure</a>
+<a href="digital-forensics.html">Digital forensics</a>
+<h4>Real-world breaches</h4>
+<a href="breaches.html">Breach timeline (hub)</a>
+<a href="breach-diginotar.html">DigiNotar (2011)</a>
+<a href="breach-heartbleed.html">Heartbleed (2014)</a>
+<a href="breach-capital-one.html">Capital One SSRF (2019)</a>
+<a href="breach-solarwinds.html">SolarWinds / Sunburst (2020)</a>
+<a href="breach-log4shell.html">Log4Shell (2021)</a>
+<a href="breach-uber.html">Uber MFA fatigue (2022)</a>
+<a href="breach-xz-utils.html">xz-utils backdoor (2024)</a>
+<h4>Practice tools</h4>
+<a href="flashcards.html" class="active">Flashcard deck</a>
+<a href="interview-technique.html">Interview technique cheat sheet</a>
+<a href="resources.html">Sources & further reading</a>
+  </div>
+</div>
+
+<main>
+
+<span class="badge badge-tool">Practice tool</span><h1>Flashcard deck</h1><p class="subtitle">18 curated terms across Tier 1/2 topics, for the spaced-repetition method the source notes recommend: cover the answer, guess first, then check yourself.</p>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+  <span style="font-size:12px;color:var(--text-muted);" id="fc-progress">1 / 18</span>
+  <span style="font-size:12px;color:var(--text-muted);" id="fc-category">Crypto</span>
+</div>
+<div id="fc-card" onclick="flipCard()" class="flashcard">
+  <p id="fc-text" style="margin:0;"></p>
+</div>
+<p style="font-size:12px;color:var(--text-muted);text-align:center;margin:8px 0 0;">Click the card to flip between question and answer</p>
+<div class="btn-row" style="margin-top:16px;">
+  <button class="btn" onclick="prevCard()" style="flex:1;">Prev</button>
+  <button class="btn" onclick="shuffleCards()" style="flex:1;">Shuffle</button>
+  <button class="btn primary" onclick="nextCard()" style="flex:1;">Next</button>
+</div>
+<script>
+const cards = [
+  {q:"Why does compromising a server's long-term private key not expose past TLS sessions?", a:"Ephemeral ECDHE keys are generated fresh per session and discarded, so there is no long-term secret whose compromise unlocks old traffic. That is forward secrecy.", cat:"Crypto"},
+  {q:"What does AEAD give you that plain AES-CBC does not?", a:"Confidentiality and integrity in one primitive. GCM authenticates the ciphertext, so tampering is detected without a separate MAC.", cat:"Crypto"},
+  {q:"Why is nonce reuse catastrophic in AES-GCM?", a:"It leaks the XOR of two plaintexts and can let an attacker recover the authentication key, breaking both confidentiality and integrity.", cat:"Crypto"},
+  {q:"What is the core mechanism difference between CSRF and XSS?", a:"CSRF abuses the browser auto-attaching cookies to a forged request; the attacker never sees the response. XSS injects and executes script in the victim's origin, so the attacker can read data.", cat:"Web app"},
+  {q:"How does the SameSite cookie attribute mitigate CSRF?", a:"It stops the browser from attaching the cookie on cross-site requests at all, so a forged request from another origin arrives unauthenticated.", cat:"Web app"},
+  {q:"What is the classic cloud escalation path from an SSRF bug?", a:"Trick the server into requesting the cloud metadata endpoint to steal the instance's IAM credentials, as happened in the Capital One breach.", cat:"Web app"},
+  {q:"Why do parameterized queries fully close SQL injection, not just filter it?", a:"The query structure is compiled before user input is bound, so input can never be reinterpreted as SQL syntax, regardless of content.", cat:"Web app"},
+  {q:"What problem does PKCE solve in OAuth for public clients like mobile or single-page apps?", a:"It proves the app exchanging the code is the same one that started the flow, preventing a stolen authorization code from being redeemed by an attacker.", cat:"Auth"},
+  {q:"What is a Kerberos Golden Ticket attack?", a:"Forging a Ticket Granting Ticket using a stolen krbtgt account hash, granting domain-wide access without ever touching the KDC again.", cat:"Auth"},
+  {q:"Why does pass-the-hash work against NTLM?", a:"NTLM authentication only ever needs the password hash, not the plaintext, so a stolen hash alone is sufficient to authenticate.", cat:"Auth"},
+  {q:"Why are passkeys phishing-resistant in a way passwords and OTP codes are not?", a:"The cryptographic challenge is bound to the origin, so a lookalike phishing site cannot complete the handshake even if the user is fooled.", cat:"Auth"},
+  {q:"What security property does each STRIDE letter violate?", a:"Spoofing breaks authenticity, tampering breaks integrity, repudiation breaks accountability, information disclosure breaks confidentiality, denial of service breaks availability, elevation of privilege breaks authorization.", cat:"Threat modeling"},
+  {q:"What is the core inversion BeyondCorp makes versus a traditional perimeter model?", a:"Trust the authenticated device and identity, not the network they are connecting from. Every request is checked regardless of source.", cat:"Cloud & infra"},
+  {q:"Why are container escapes a bigger concern than VM escapes?", a:"Containers share the host kernel, a weaker isolation boundary than a hypervisor, so a kernel bug or misconfiguration can break out more directly.", cat:"Cloud & infra"},
+  {q:"Why does Chrome deploy hybrid X25519 plus ML-KEM instead of pure ML-KEM?", a:"So a classical break of ML-KEM alone, or a future quantum break of X25519 alone, does not compromise the session. Both would have to fail.", cat:"Crypto (2026)"},
+  {q:"What threat model is driving post-quantum migration today, before quantum computers exist?", a:"Harvest now, decrypt later: an adversary can record encrypted traffic now and decrypt it once a cryptographically relevant quantum computer exists.", cat:"Crypto (2026)"},
+  {q:"What problem does certificate transparency solve that the CA system alone does not?", a:"It makes mis-issued certificates publicly and immediately detectable via append-only logs, instead of silently trusted as in the DigiNotar case.", cat:"Crypto"},
+  {q:"What is the modern mitigation for the risk of long-lived exported service account keys?", a:"Workload identity federation: short-lived, attested tokens instead of long-lived portable bearer keys.", cat:"Cloud & infra"}
+];
+let idx = 0;
+let showingAnswer = false;
+let order = cards.map((c, i) => i);
+function render(){
+  const c = cards[order[idx]];
+  document.getElementById('fc-text').textContent = showingAnswer ? c.a : c.q;
+  document.getElementById('fc-progress').textContent = (idx+1)+' / '+cards.length;
+  document.getElementById('fc-category').textContent = c.cat;
+}
+function flipCard(){ showingAnswer = !showingAnswer; render(); }
+function nextCard(){ idx = (idx+1) % cards.length; showingAnswer = false; render(); }
+function prevCard(){ idx = (idx-1+cards.length) % cards.length; showingAnswer = false; render(); }
+function shuffleCards(){
+  order = order.map(v => [Math.random(), v]).sort((a,b) => a[0]-b[0]).map(x => x[1]);
+  idx = 0; showingAnswer = false; render();
+}
+render();
+</script>
+<div class="pagenav"><a class="" href="breach-xz-utils.html"><div class="dir">Previous</div>xz-utils backdoor (2024)</a><a class="next" href="interview-technique.html"><div class="dir">Next</div>Interview technique cheat sheet</a></div>
+
+    <div class="check-row" style="margin-top:36px;border-top:1px solid var(--border);border-bottom:none;padding-top:16px;">
+      <input type="checkbox" id="page-complete">
+      <label for="page-complete">Mark this page as studied</label>
+    </div>
+    <script>initPageComplete('flashcards');</script>
+</main>
+
+<footer>
+  Built from Grace Nolan's Google Security Engineering interview notes, reorganized and updated with 2025&ndash;2026 developments. Personal study notes, not affiliated with Google.
+</footer>
+
+<script src="../assets/app.js"></script>
+
+</body>
+</html>

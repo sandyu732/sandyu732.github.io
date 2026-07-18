@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Web application security · Google Security SWE Interview Prep</title>
+<meta name="description" content="XSS, CSRF, SQLi, SSRF, CORS/SOP root causes and defenses, plus the 2025 OWASP LLM Top 10.">
+<link rel="stylesheet" href="../assets/style.css">
+
+</head>
+<body>
+
+<nav class="topnav">
+  <a class="brand" href="../index.html"><span class="dot"></span>Security interview prep</a>
+  <div class="topnav-actions">
+    <button class="icon-btn" onclick="toggleTheme()">Theme</button>
+    <button class="icon-btn" onclick="toggleMenu()">Menu</button>
+  </div>
+</nav>
+
+<div class="menu-panel" id="menu-panel">
+  <div class="menu-sheet">
+    <button class="icon-btn menu-close" onclick="toggleMenu()">Close</button>
+    <a href="../index.html" style="font-weight:600;font-size:15px;display:block;margin:4px 0 16px;">Home</a>
+    <h4>Tier 1 — go deep</h4>
+<a href="networking-tls.html">Networking & TLS</a>
+<a href="cryptography.html">Cryptography</a>
+<a href="web-app-security.html" class="active">Web app security</a>
+<a href="auth-identity.html">Auth & identity</a>
+<a href="coding-practice.html">Security-themed coding</a>
+<h4>Tier 2 — working knowledge</h4>
+<a href="threat-modeling.html">Threat modeling (STRIDE tool)</a>
+<a href="cloud-infra-security.html">Cloud & infra security</a>
+<a href="detection-incident-response.html">Detection & incident response</a>
+<h4>Tier 3 — conversational fluency</h4>
+<a href="malware-reversing.html">Malware & reversing</a>
+<a href="exploits-attack-structure.html">Exploits & attack structure</a>
+<a href="digital-forensics.html">Digital forensics</a>
+<h4>Real-world breaches</h4>
+<a href="breaches.html">Breach timeline (hub)</a>
+<a href="breach-diginotar.html">DigiNotar (2011)</a>
+<a href="breach-heartbleed.html">Heartbleed (2014)</a>
+<a href="breach-capital-one.html">Capital One SSRF (2019)</a>
+<a href="breach-solarwinds.html">SolarWinds / Sunburst (2020)</a>
+<a href="breach-log4shell.html">Log4Shell (2021)</a>
+<a href="breach-uber.html">Uber MFA fatigue (2022)</a>
+<a href="breach-xz-utils.html">xz-utils backdoor (2024)</a>
+<h4>Practice tools</h4>
+<a href="flashcards.html">Flashcard deck</a>
+<a href="interview-technique.html">Interview technique cheat sheet</a>
+<a href="resources.html">Sources & further reading</a>
+  </div>
+</div>
+
+<main>
+
+<span class="badge badge-tier1">Tier 1 — go deep</span><h1>Web application security</h1><p class="subtitle">Root cause and mechanism for every classic web vulnerability &mdash; not just the label. Root cause is what signals depth in an interview.</p><h2>Same-origin policy &amp; CORS</h2><p>SOP is the default-deny browser boundary (scheme + host + port must match). CORS is an explicit, server-declared relaxation of SOP via response headers. For "unsafe" requests (custom headers, non-simple methods, credentialed requests) the browser sends a <strong>preflight</strong> <code>OPTIONS</code> request first, specifically to prevent a malicious page from silently triggering state-changing cross-origin requests.</p><h2>CSRF vs XSS &mdash; the distinction interviewers actually probe for</h2><p>CSRF exploits the browser's automatic inclusion of ambient credentials (cookies) on requests to a site the victim is already authenticated to &mdash; the attacker never reads the response, they just cause a side effect. Defenses: CSRF tokens, the <code>SameSite</code> cookie attribute (browsers defaulting to <code>Lax</code> has made classic CSRF much rarer), and checking <code>Origin</code>/<code>Referer</code> headers.</p><div class="term"><div class="term-name"><code>Reflected XSS</code></div>Payload round-trips through a request parameter, immediately rendered &mdash; needs social engineering to deliver the malicious link.</div><div class="term"><div class="term-name"><code>Persistent / stored XSS</code></div>Payload saved server-side (e.g. a comment field), executes for every subsequent viewer &mdash; highest impact.</div><div class="term"><div class="term-name"><code>DOM-based XSS</code></div>The vulnerability is entirely client-side JS taking untrusted data (e.g. <code>location.hash</code>) and writing it into the DOM via <code>innerHTML</code>, without the payload ever touching the server &mdash; server-side sanitization can't catch it.</div><p>Root-cause defense: context-aware output encoding plus Content-Security-Policy as defense in depth, not primary defense.</p><h2>SQL injection</h2><div class="term"><div class="term-name"><code>Union-based</code></div>Leverage <code>UNION SELECT</code> to pull data from other tables through a vulnerable query.</div><div class="term"><div class="term-name"><code>Error-based</code></div>Force DB errors that leak schema info in the error message.</div><div class="term"><div class="term-name"><code>Blind (boolean / time-based)</code></div>No visible output &mdash; infer true/false one bit at a time via response differences or <code>SLEEP()</code> timing.</div><p>Root cause is always the same: untrusted input concatenated into a query string instead of passed as a parameter. Parameterized queries close the entire class because the query structure is compiled before user input is bound, so input can never be reinterpreted as SQL syntax.</p><h2>SSRF</h2><p>The server itself is tricked into making a request to an attacker-chosen destination &mdash; classically used to reach internal-only services like cloud metadata endpoints. See the <a href="../pages/breach-capital-one.html">Capital One breach</a> for the full real-world chain from SSRF to 106 million stolen records. Defenses: allowlist outbound destinations, disable redirects on server-side fetches, network-segment the fetching service away from sensitive internal endpoints.</p><h2>Directory traversal / LFI / RFI</h2><p><code>../../etc/passwd</code>-style path manipulation. Root cause is unsanitized file-path construction from user input; defense is canonicalizing the resolved path and checking it stays within an allowed root.</p><h2>2025&ndash;2026 addition: prompt injection</h2><p>The OWASP Top 10 for LLM Applications (2025) is now a live framework, and Google is shipping LLM-integrated products broadly. Prompt injection holds the #1 spot for the second edition running &mdash; an attacker embeds instructions in content the model will ingest to override its intended behavior.</p><div class="callout now"><div class="callout-title">Same root cause as SQLi and XSS</div>Untrusted data and trusted instructions share the same channel, and the model can't reliably distinguish them. New 2025 categories worth knowing: excessive agency (an agent with more tool permissions than a task needs, directly analogous to least-privilege violations elsewhere), system prompt leakage, and vector/embedding weaknesses in RAG pipelines. If a design question involves an AI component, raise prompt injection unprompted &mdash; it's a strong signal of current awareness.</div><h2>Practice questions</h2><ul><li>Why does a DOM-based XSS bug evade server-side sanitization entirely?</li><li>What's the classic cloud escalation path from an SSRF bug?</li><li>Why do parameterized queries fully close SQL injection rather than just filtering it?</li></ul><div class="pagenav"><a class="" href="cryptography.html"><div class="dir">Previous</div>Cryptography</a><a class="next" href="auth-identity.html"><div class="dir">Next</div>Auth & identity</a></div>
+
+    <div class="check-row" style="margin-top:36px;border-top:1px solid var(--border);border-bottom:none;padding-top:16px;">
+      <input type="checkbox" id="page-complete">
+      <label for="page-complete">Mark this page as studied</label>
+    </div>
+    <script>initPageComplete('web-app-security');</script>
+</main>
+
+<footer>
+  Built from Grace Nolan's Google Security Engineering interview notes, reorganized and updated with 2025&ndash;2026 developments. Personal study notes, not affiliated with Google.
+</footer>
+
+<script src="../assets/app.js"></script>
+
+</body>
+</html>

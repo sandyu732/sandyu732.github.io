@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Digital forensics · Google Security SWE Interview Prep</title>
+<meta name="description" content="Evidence volatility ordering, memory/disk/mobile forensics domains, anti-forensics, and chain of custody.">
+<link rel="stylesheet" href="../assets/style.css">
+
+</head>
+<body>
+
+<nav class="topnav">
+  <a class="brand" href="../index.html"><span class="dot"></span>Security interview prep</a>
+  <div class="topnav-actions">
+    <button class="icon-btn" onclick="toggleTheme()">Theme</button>
+    <button class="icon-btn" onclick="toggleMenu()">Menu</button>
+  </div>
+</nav>
+
+<div class="menu-panel" id="menu-panel">
+  <div class="menu-sheet">
+    <button class="icon-btn menu-close" onclick="toggleMenu()">Close</button>
+    <a href="../index.html" style="font-weight:600;font-size:15px;display:block;margin:4px 0 16px;">Home</a>
+    <h4>Tier 1 — go deep</h4>
+<a href="networking-tls.html">Networking & TLS</a>
+<a href="cryptography.html">Cryptography</a>
+<a href="web-app-security.html">Web app security</a>
+<a href="auth-identity.html">Auth & identity</a>
+<a href="coding-practice.html">Security-themed coding</a>
+<h4>Tier 2 — working knowledge</h4>
+<a href="threat-modeling.html">Threat modeling (STRIDE tool)</a>
+<a href="cloud-infra-security.html">Cloud & infra security</a>
+<a href="detection-incident-response.html">Detection & incident response</a>
+<h4>Tier 3 — conversational fluency</h4>
+<a href="malware-reversing.html">Malware & reversing</a>
+<a href="exploits-attack-structure.html">Exploits & attack structure</a>
+<a href="digital-forensics.html" class="active">Digital forensics</a>
+<h4>Real-world breaches</h4>
+<a href="breaches.html">Breach timeline (hub)</a>
+<a href="breach-diginotar.html">DigiNotar (2011)</a>
+<a href="breach-heartbleed.html">Heartbleed (2014)</a>
+<a href="breach-capital-one.html">Capital One SSRF (2019)</a>
+<a href="breach-solarwinds.html">SolarWinds / Sunburst (2020)</a>
+<a href="breach-log4shell.html">Log4Shell (2021)</a>
+<a href="breach-uber.html">Uber MFA fatigue (2022)</a>
+<a href="breach-xz-utils.html">xz-utils backdoor (2024)</a>
+<h4>Practice tools</h4>
+<a href="flashcards.html">Flashcard deck</a>
+<a href="interview-technique.html">Interview technique cheat sheet</a>
+<a href="resources.html">Sources & further reading</a>
+  </div>
+</div>
+
+<main>
+
+<span class="badge badge-tier3">Tier 3 — conversational fluency</span><h1>Digital forensics</h1><p class="subtitle">Evidence volatility, the three forensics domains, and why chain of custody matters &mdash; at a conversational level.</p><h2>Evidence volatility</h2><div class="stat-row"><div class="stat"><div class="num">Highest</div><div class="lbl">Network &amp; memory — capture first</div></div><div class="stat"><div class="num">Medium</div><div class="lbl">Disk — persists, but can be wiped</div></div><div class="stat"><div class="num">Lowest</div><div class="lbl">Cold backups / archives</div></div></div><p>Network and memory state are the most volatile and time-sensitive to capture &mdash; a live memory dump is often gone the moment a box is rebooted, which is exactly why an IR runbook should specify memory acquisition before disk imaging in most cases.</p><h2>The three domains</h2><div class="term"><div class="term-name"><code>Memory forensics</code></div>Memory acquisition (footprint, smear, hiberfiles), virtual vs physical memory, kernel vs user space. Tools: Volatility, Google Rapid Response (GRR) / Rekall, WinDbg.</div><div class="term"><div class="term-name"><code>Disk forensics</code></div>Disk imaging, filesystems (NTFS / ext2-4 / APFS), logs (Windows event logs, Unix syslogs, application logs), data carving for recovery. Tools: plaso / log2timeline, FTK Imager, EnCase.</div><div class="term"><div class="term-name"><code>Mobile forensics</code></div>Jailbreaking implications, and how Android vs iPhone acquisition differs meaningfully from computer forensics.</div><h2>Anti-forensics</h2><p>Timestomping (altering file metadata timestamps to blend in or mislead investigators) is the classic example of malware actively working against the forensics process, not just against detection.</p><h2>Chain of custody</h2><p>Evidence integrity determines whether findings are usable at all &mdash; legally or organizationally. Handover notes at every stage of evidence handling are what make a chain of custody defensible.</p><div class="pagenav"><a class="" href="exploits-attack-structure.html"><div class="dir">Previous</div>Exploits & attack structure</a><a class="next" href="breaches.html"><div class="dir">Next</div>Real-world breach timeline</a></div>
+
+    <div class="check-row" style="margin-top:36px;border-top:1px solid var(--border);border-bottom:none;padding-top:16px;">
+      <input type="checkbox" id="page-complete">
+      <label for="page-complete">Mark this page as studied</label>
+    </div>
+    <script>initPageComplete('digital-forensics');</script>
+</main>
+
+<footer>
+  Built from Grace Nolan's Google Security Engineering interview notes, reorganized and updated with 2025&ndash;2026 developments. Personal study notes, not affiliated with Google.
+</footer>
+
+<script src="../assets/app.js"></script>
+
+</body>
+</html>

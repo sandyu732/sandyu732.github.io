@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Capital One SSRF breach (2019) · Google Security SWE Interview Prep</title>
+<meta name="description" content="How an SSRF bug in a misconfigured WAF reached the AWS metadata service and turned into 106 million stolen records.">
+<link rel="stylesheet" href="../assets/style.css">
+
+</head>
+<body>
+
+<nav class="topnav">
+  <a class="brand" href="../index.html"><span class="dot"></span>Security interview prep</a>
+  <div class="topnav-actions">
+    <button class="icon-btn" onclick="toggleTheme()">Theme</button>
+    <button class="icon-btn" onclick="toggleMenu()">Menu</button>
+  </div>
+</nav>
+
+<div class="menu-panel" id="menu-panel">
+  <div class="menu-sheet">
+    <button class="icon-btn menu-close" onclick="toggleMenu()">Close</button>
+    <a href="../index.html" style="font-weight:600;font-size:15px;display:block;margin:4px 0 16px;">Home</a>
+    <h4>Tier 1 — go deep</h4>
+<a href="networking-tls.html">Networking & TLS</a>
+<a href="cryptography.html">Cryptography</a>
+<a href="web-app-security.html">Web app security</a>
+<a href="auth-identity.html">Auth & identity</a>
+<a href="coding-practice.html">Security-themed coding</a>
+<h4>Tier 2 — working knowledge</h4>
+<a href="threat-modeling.html">Threat modeling (STRIDE tool)</a>
+<a href="cloud-infra-security.html">Cloud & infra security</a>
+<a href="detection-incident-response.html">Detection & incident response</a>
+<h4>Tier 3 — conversational fluency</h4>
+<a href="malware-reversing.html">Malware & reversing</a>
+<a href="exploits-attack-structure.html">Exploits & attack structure</a>
+<a href="digital-forensics.html">Digital forensics</a>
+<h4>Real-world breaches</h4>
+<a href="breaches.html">Breach timeline (hub)</a>
+<a href="breach-diginotar.html">DigiNotar (2011)</a>
+<a href="breach-heartbleed.html">Heartbleed (2014)</a>
+<a href="breach-capital-one.html" class="active">Capital One SSRF (2019)</a>
+<a href="breach-solarwinds.html">SolarWinds / Sunburst (2020)</a>
+<a href="breach-log4shell.html">Log4Shell (2021)</a>
+<a href="breach-uber.html">Uber MFA fatigue (2022)</a>
+<a href="breach-xz-utils.html">xz-utils backdoor (2024)</a>
+<h4>Practice tools</h4>
+<a href="flashcards.html">Flashcard deck</a>
+<a href="interview-technique.html">Interview technique cheat sheet</a>
+<a href="resources.html">Sources & further reading</a>
+  </div>
+</div>
+
+<main>
+
+<span class="badge badge-breach">Breach case study</span><span class="badge badge-tier3">2019</span><h1>Capital One SSRF breach</h1><p class="subtitle">The textbook "walk me through a breach" story — SSRF, cloud IAM, and detection failure in one incident.</p><div class="diagram-wrap"><svg width="100%" viewBox="0 0 680 482" role="img" xmlns="http://www.w3.org/2000/svg"><defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="var(--text-muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs><g class="chain-box"><rect x="170" y="24" width="340" height="56" rx="10" style="stroke:var(--red)"/><text class="chain-title" x="340" y="48" text-anchor="middle">1. SSRF in the WAF</text><text class="chain-sub" x="340" y="66" text-anchor="middle">Misconfigured ModSecurity WAF forwards attacker-chosen URLs</text></g><line class="chain-arrow" x1="340" y1="80" x2="340" y2="112" marker-end="url(#arrow)"/><g class="chain-box"><rect x="170" y="112" width="340" height="56" rx="10" style="stroke:var(--red)"/><text class="chain-title" x="340" y="136" text-anchor="middle">2. Request to 169.254.169.254</text><text class="chain-sub" x="340" y="154" text-anchor="middle">The WAF is tricked into querying the instance metadata IP</text></g><line class="chain-arrow" x1="340" y1="168" x2="340" y2="200" marker-end="url(#arrow)"/><g class="chain-box"><rect x="170" y="200" width="340" height="56" rx="10" style="stroke:var(--amber)"/><text class="chain-title" x="340" y="224" text-anchor="middle">3. IMDSv1 hands over credentials</text><text class="chain-sub" x="340" y="242" text-anchor="middle">No auth token required — temporary IAM keys returned freely</text></g><line class="chain-arrow" x1="340" y1="256" x2="340" y2="288" marker-end="url(#arrow)"/><g class="chain-box"><rect x="170" y="288" width="340" height="56" rx="10" style="stroke:var(--amber)"/><text class="chain-title" x="340" y="312" text-anchor="middle">4. Over-scoped role calls S3</text><text class="chain-sub" x="340" y="330" text-anchor="middle">Stolen role could list and read far more buckets than needed</text></g><line class="chain-arrow" x1="340" y1="344" x2="340" y2="376" marker-end="url(#arrow)"/><g class="chain-box"><rect x="170" y="376" width="340" height="56" rx="10" style="stroke:var(--purple)"/><text class="chain-title" x="340" y="400" text-anchor="middle">5. Bulk exfiltration, ~700 buckets</text><text class="chain-sub" x="340" y="418" text-anchor="middle">106M records taken, undetected for about four months</text></g><text class="chain-note" x="340" y="458" text-anchor="middle">Each arrow is a place a single control would have broken the chain</text></svg></div><p>Paige Thompson, a former AWS employee, pulled this off in March 2019; it wasn't discovered until July, after she posted about it publicly. Every link in the chain above is a distinct, nameable security concept.</p><h2>The confused deputy</h2><p>The root vulnerability was SSRF in Capital One's ModSecurity WAF &mdash; a misconfigured rule let an attacker-supplied request get proxied server-side rather than validated. That's mechanically identical to the SSRF you'd write in the <a href="../pages/coding-practice.html">coding-practice section</a>: untrusted input controls where the server sends a request. What made it catastrophic was where that forwarded request could go: <code>169.254.169.254</code>, the EC2 instance metadata service, reachable only from inside the instance &mdash; and trusted with zero authentication under IMDSv1. Any process on the box, including one an attacker tricked the WAF into impersonating, could just <code>GET</code> a temporary IAM key.</p><div class="callout danger"><div class="callout-title">This is a confused deputy problem</div>The WAF had legitimate permissions on Capital One's behalf, and the SSRF let an outsider borrow its identity without ever needing a password.</div><h2>The second failure: least privilege violated</h2><p>The role attached to that WAF instance could list and read across roughly 700 S3 buckets &mdash; vastly more than a web application firewall has any business touching. If that role had been correctly scoped, the stolen credentials would have been nearly worthless. Instead, Thompson ran S3 sync commands bucket after bucket, pulling data on about 106 million people, including roughly 140,000 Social Security numbers and 80,000 linked bank account numbers. Capital One paid an $80M OCC penalty plus a $190M class-action settlement.</p><h2>The detection gap</h2><p>The exfiltration ran for months before anyone at Capital One noticed &mdash; it surfaced only because Thompson bragged about it and a third party tipped Capital One off. A role suddenly issuing high-volume <code>ListBucket</code>/<code>GetObject</code> calls across hundreds of buckets it doesn't normally touch is a strong anomaly signal; see the <a href="../pages/detection-incident-response.html">detection &amp; IR page</a> for how you'd design monitoring to catch this kind of misuse via baseline correlation, not just static policy review.</p><h2>How IMDSv2 fixed this class of bug</h2><p>IMDSv2 requires first sending a <code>PUT</code> request with a custom header to obtain a session token before any metadata <code>GET</code> will succeed, and it defaults to a hop limit of 1. Most SSRF bugs only give an attacker control over a URL fetched via <code>GET</code> &mdash; they can't easily inject a custom header or switch the HTTP verb, and even if the vulnerable service is itself a proxy, hop-limit 1 means the token request can't survive being relayed through it. "Authentication was implicit and free" became "authentication requires a request shape a generic SSRF can't produce."</p><h2>Interview framing</h2><div class="callout now"><div class="callout-title">The throughline to state explicitly</div>SSRF isn't just a web bug — it's dangerous in direct proportion to what the vulnerable service is trusted to reach, and in cloud environments, that's almost always the metadata endpoint, and therefore your entire IAM posture.</div><div class="pagenav"><a class="" href="breach-heartbleed.html"><div class="dir">Previous</div>Heartbleed (2014)</a><a class="next" href="breach-solarwinds.html"><div class="dir">Next</div>SolarWinds / Sunburst (2020)</a></div>
+
+    <div class="check-row" style="margin-top:36px;border-top:1px solid var(--border);border-bottom:none;padding-top:16px;">
+      <input type="checkbox" id="page-complete">
+      <label for="page-complete">Mark this page as studied</label>
+    </div>
+    <script>initPageComplete('breach-capital-one');</script>
+</main>
+
+<footer>
+  Built from Grace Nolan's Google Security Engineering interview notes, reorganized and updated with 2025&ndash;2026 developments. Personal study notes, not affiliated with Google.
+</footer>
+
+<script src="../assets/app.js"></script>
+
+</body>
+</html>
