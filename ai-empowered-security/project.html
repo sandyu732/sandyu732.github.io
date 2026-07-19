@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hands-on project &middot; AI-Empowered Security Interview Prep</title>
+<meta name="description" content="Build a working AI vulnerability triage pipeline in about two hours: dataset, structured-output classifier, evaluation harness, and a confidence-gated guardrail.">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<nav class="topnav">
+  <a class="brand" href="index.html"><span class="dot"></span>AI-Empowered Security prep</a>
+  <div class="topnav-actions">
+    <button class="icon-btn" onclick="toggleTheme()">Theme</button>
+    <a class="icon-btn" href="../security-software-engineer/index.html">Security fundamentals site</a>
+  </div>
+</nav>
+
+<main>
+<div class="subnav"><a href="index.html">4-hour plan</a><a href="project.html" class="active">Hands-on project</a><a href="interview-prep.html">Interview prep</a></div>
+<span class="badge badge-tool">Hands-on project</span><h1>Build: an AI vulnerability triage pipeline</h1><p class="subtitle">About two hours. Every box in the diagram below becomes a real function by the end. This is a working miniature of exactly what the job description asks you to ship.</p><div class="diagram-wrap"><svg width="100%" viewBox="0 0 680 394" role="img" xmlns="http://www.w3.org/2000/svg"><defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="var(--text-muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs><g class="chain-box"><rect x="170" y="24" width="340" height="56" rx="10" style="stroke:var(--accent)"/><text class="chain-title" x="340" y="48" text-anchor="middle">1. Labeled dataset</text><text class="chain-sub" x="340" y="66" text-anchor="middle">A dozen snippets — SQLi, SSRF, XSS, hardcoded secret, plus safe ones</text></g><line class="chain-arrow" x1="340" y1="80" x2="340" y2="112" marker-end="url(#arrow)"/><g class="chain-box"><rect x="170" y="112" width="340" height="56" rx="10" style="stroke:var(--accent)"/><text class="chain-title" x="340" y="136" text-anchor="middle">2. classify_snippet()</text><text class="chain-sub" x="340" y="154" text-anchor="middle">LLM call with a structured-JSON prompt: type, confidence, reason</text></g><line class="chain-arrow" x1="340" y1="168" x2="340" y2="200" marker-end="url(#arrow)"/><g class="chain-box"><rect x="170" y="200" width="340" height="56" rx="10" style="stroke:var(--amber)"/><text class="chain-title" x="340" y="224" text-anchor="middle">3. evaluate()</text><text class="chain-sub" x="340" y="242" text-anchor="middle">Precision / recall against your ground truth labels</text></g><line class="chain-arrow" x1="340" y1="256" x2="340" y2="288" marker-end="url(#arrow)"/><g class="chain-box"><rect x="170" y="288" width="340" height="56" rx="10" style="stroke:var(--purple)"/><text class="chain-title" x="340" y="312" text-anchor="middle">4. route()</text><text class="chain-sub" x="340" y="330" text-anchor="middle">Confidence + blast radius decide: auto-fix, human review, or ignore</text></g><text class="chain-note" x="340" y="370" text-anchor="middle">Build every box. This is a working miniature of what the job actually asks you to ship.</text></svg></div><h2>1. The labeled dataset</h2><p>Ground truth first, always &mdash; without it you can't measure anything downstream. Pull realistic examples straight from the <a href="../security-software-engineer/pages/web-app-security.html">web app security</a> page you already have.</p><pre><code>SAMPLES = [
+    {&quot;id&quot;: 1, &quot;code&quot;: &#x27;query = f&quot;SELECT * FROM users WHERE id = {user_id}&quot;&#x27;, &quot;label&quot;: &quot;sqli&quot;},
+    {&quot;id&quot;: 2, &quot;code&quot;: &quot;resp = requests.get(user_supplied_url)&quot;, &quot;label&quot;: &quot;ssrf&quot;},
+    {&quot;id&quot;: 3, &quot;code&quot;: &#x27;AWS_SECRET = &quot;AKIAABCDEFGHIJKLMNOP&quot;&#x27;, &quot;label&quot;: &quot;hardcoded_secret&quot;},
+    {&quot;id&quot;: 4, &quot;code&quot;: &quot;el.innerHTML = &#x27;&lt;div&gt;&#x27; + userComment + &#x27;&lt;/div&gt;&#x27;&quot;, &quot;label&quot;: &quot;xss&quot;},
+    {&quot;id&quot;: 5, &quot;code&quot;: &#x27;cursor.execute(&quot;SELECT * FROM users WHERE id = %s&quot;, (user_id,))&#x27;, &quot;label&quot;: &quot;safe&quot;},
+    {&quot;id&quot;: 6, &quot;code&quot;: &quot;resp = requests.get(url) if url in ALLOWLIST else None&quot;, &quot;label&quot;: &quot;safe&quot;},
+    {&quot;id&quot;: 7, &quot;code&quot;: &quot;os.environ.get(&#x27;DB_PASSWORD&#x27;)&quot;, &quot;label&quot;: &quot;safe&quot;},
+    {&quot;id&quot;: 8, &quot;code&quot;: &#x27;template.render(comment=escape(user_comment))&#x27;, &quot;label&quot;: &quot;safe&quot;},
+    # add 4-6 more of your own — pull straight from the security-fundamentals
+    # site&#x27;s web-app-security and cryptography pages for realistic examples
+]</code></pre><h2>2. The classifier, with structured output</h2><p>Start with a mock &mdash; a few <code>if</code> statements standing in for the model. This is deliberate: it proves your pipeline plumbing (prompt &rarr; parse &rarr; schema) works before you spend a single API call on it, and it means step 3's evaluation harness is testable immediately.</p><pre><code>import json
+
+PROMPT = &#x27;&#x27;&#x27;You are a security code reviewer. Classify this snippet.
+Respond with ONLY valid JSON matching this schema:
+{{&quot;vulnerability&quot;: &quot;sqli|ssrf|xss|hardcoded_secret|none&quot;, &quot;confidence&quot;: 0.0-1.0, &quot;reason&quot;: &quot;one sentence&quot;}}
+
+Code:
+{code}
+&#x27;&#x27;&#x27;
+
+def classify_snippet(code, call_llm):
+    raw = call_llm(PROMPT.format(code=code))
+    try:
+        return json.loads(raw)
+    except json.JSONDecodeError:
+        # never let a malformed response silently pass as &quot;safe&quot; downstream
+        return {&quot;vulnerability&quot;: &quot;parse_error&quot;, &quot;confidence&quot;: 0.0, &quot;reason&quot;: raw[:80]}
+
+# Start here with zero API cost — a rule-based mock proves the pipeline
+# shape works before you spend a token on a real model:
+def mock_call_llm(prompt):
+    code = prompt.split(&quot;Code:\n&quot;)[-1]
+    if &quot;SELECT&quot; in code and &quot;{&quot; in code:
+        return &#x27;{&quot;vulnerability&quot;: &quot;sqli&quot;, &quot;confidence&quot;: 0.9, &quot;reason&quot;: &quot;f-string in SQL&quot;}&#x27;
+    if &quot;requests.get(user&quot; in code:
+        return &#x27;{&quot;vulnerability&quot;: &quot;ssrf&quot;, &quot;confidence&quot;: 0.8, &quot;reason&quot;: &quot;unvalidated outbound URL&quot;}&#x27;
+    return &#x27;{&quot;vulnerability&quot;: &quot;none&quot;, &quot;confidence&quot;: 0.95, &quot;reason&quot;: &quot;no pattern matched&quot;}&#x27;
+
+# Swap in a real model once the pipeline works end to end, e.g.:
+# def call_llm(prompt):
+#     return gemini_client.generate_content(prompt).text</code></pre><div class="callout"><div class="callout-title">Why the try/except matters</div>A model that returns malformed JSON is not a rare edge case in production &mdash; it's a Tuesday. Treat a parse failure as its own outcome, never as a silent "safe." This single habit is a strong signal of production ML experience.</div><h2>3. The evaluation harness</h2><p>Run it against your mock classifier first. You should get a real precision/recall number, even though there's no real model yet &mdash; that's the point. The harness doesn't care what's behind <code>call_llm</code>.</p><pre><code>def evaluate(samples, call_llm):
+    tp = fp = fn = tn = 0
+    for s in samples:
+        pred = classify_snippet(s[&quot;code&quot;], call_llm)
+        predicted_positive = pred[&quot;vulnerability&quot;] not in (&quot;none&quot;, &quot;parse_error&quot;)
+        actual_positive = s[&quot;label&quot;] != &quot;safe&quot;
+        if predicted_positive and actual_positive: tp += 1
+        elif predicted_positive and not actual_positive: fp += 1
+        elif not predicted_positive and actual_positive: fn += 1
+        else: tn += 1
+
+    precision = tp / (tp + fp) if (tp + fp) else float(&quot;nan&quot;)
+    recall = tp / (tp + fn) if (tp + fn) else float(&quot;nan&quot;)
+    print(f&quot;precision={precision:.2f}  recall={recall:.2f}  &quot;
+          f&quot;tp={tp} fp={fp} fn={fn} tn={tn}&quot;)
+
+evaluate(SAMPLES, mock_call_llm)</code></pre><h2>4. The guardrail</h2><p>This is the highest-leverage 15 minutes of the whole exercise.</p><pre><code>def route(prediction, blast_radius=&quot;high&quot;):
+    &quot;&quot;&quot;blast_radius: how bad it is if an auto-fix here is wrong.&quot;&quot;&quot;
+    if prediction[&quot;vulnerability&quot;] in (&quot;none&quot;, &quot;parse_error&quot;):
+        return &quot;no_action&quot;
+    if prediction[&quot;confidence&quot;] &gt;= 0.85 and blast_radius == &quot;low&quot;:
+        return &quot;auto_fix&quot;          # only for reversible, low-stakes changes
+    return &quot;human_review_queue&quot;    # everything else waits for a person
+
+# This one function is the entire idea behind &quot;automated guardrails to
+# mitigate risk&quot; from the job description. Everything upstream of it can
+# be wrong sometimes — this is the layer that decides how much that matters.</code></pre><h2>Stretch goal, if you have time left (~30 min)</h2><p>Add retrieval: embed the one-paragraph descriptions from the OWASP Top 10 (or your own <a href="../security-software-engineer/pages/web-app-security.html">web app security notes</a>), embed each code snippet, and pull the single closest description into the prompt as extra context before classifying. You now have a miniature RAG pipeline, and you can talk about chunking and retrieval from direct experience instead of theory.</p><h2>What this demonstrates in an interview</h2><p>Not "I called an LLM API." It demonstrates you understand that a model call is one component in a system that needs ground truth, measurement, and a gate before anything is trusted to act &mdash; which is precisely what "design and deploy AI-based solutions and automated pipelines" and "automated guardrails to mitigate risks" mean on the job posting. Continue to <a href="interview-prep.html">interview prep</a> to see exactly how this maps to the loop.</p>
+</main>
+
+<footer>
+  Companion to the <a href="../security-software-engineer/index.html">security fundamentals site</a>. Built for the <a href="https://www.google.com/about/careers/applications/jobs/results/139662376491197126-software-engineer-aiempowered-security">Software Engineer, AI-Empowered Security</a> role at Google Cloud.
+</footer>
+
+<script src="assets/app.js"></script>
+</body>
+</html>
