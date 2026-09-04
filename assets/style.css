@@ -80,8 +80,8 @@ a:hover { text-decoration: underline; }
 }
 
 /* Cover banner */
-.cover { width: 100%; height: 260px; overflow: hidden; }
-.cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.cover { width: 100%; height: clamp(220px, 30vw, 460px); overflow: hidden; }
+.cover img { width: 100%; height: 100%; object-fit: cover; object-position: center 65%; display: block; }
 
 /* Hero */
 .hero { display: flex; gap: 28px; align-items: center; padding: 0 0 40px; }
