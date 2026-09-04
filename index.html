@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sandeep Upadhyay</title>
+<meta name="description" content="Personal site — professional journey, projects, and writing.">
+<link rel="stylesheet" href="assets/style.css">
+<script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
+</head>
+<body>
+
+<nav class="topnav">
+  <a class="brand" href="index.html">Sandeep Upadhyay</a>
+  <div class="links">
+    <a href="projects/">Projects</a>
+    <a href="blogs/">Blogs</a>
+    <button class="icon-btn" onclick="toggleTheme()">Theme</button>
+  </div>
+</nav>
+
+<main>
+
+<div class="hero">
+  <div class="hero-photo">[ photo ]</div>
+  <div>
+    <h1>Sandeep Upadhyay</h1>
+    <p class="tagline">[ One-line tagline — role, focus, or what you're building right now ]</p>
+  </div>
+</div>
+
+<section class="block">
+  <div class="eyebrow">The journey</div>
+  <h2>Trajectory</h2>
+  <p class="lede">From graduating engineering and starting my first full-time software role in 2017, to today — the road so far.</p>
+
+  <div class="road">
+    <div class="milestone placeholder">
+      <div class="year">2017</div>
+      <h3>Graduated &amp; started first full-time software role</h3>
+      <p>[ Add company, role, and what you were building ]</p>
+    </div>
+    <div class="milestone placeholder">
+      <div class="year">[ year ]</div>
+      <h3>[ Milestone title ]</h3>
+      <p>[ Add details — promotion, new company, a project that mattered ]</p>
+    </div>
+    <div class="milestone placeholder">
+      <div class="year">[ year ]</div>
+      <h3>[ Milestone title ]</h3>
+      <p>[ Add details ]</p>
+    </div>
+    <div class="milestone placeholder">
+      <div class="year">2026</div>
+      <h3>Today</h3>
+      <p>[ Where you are now, and what's next ]</p>
+    </div>
+  </div>
+</section>
+
+<section class="block">
+  <div class="eyebrow">A thought</div>
+  <h2>Opportunity for all</h2>
+  <div class="opportunity">
+    <p>Talent and hard work get most of the credit for how careers turn out — but they're only two pieces of the story. The third, quieter piece is <strong>opportunity</strong>: the doors that happen to be open to you, the person who happens to take a chance on you, the room you happen to get into. Two people can bring the same effort and talent to their work and still walk very different paths, simply because one of them ran into a hidden barrier the other never had to see.</p>
+    <blockquote>A single opportunity can bridge the gap between hard work and success.</blockquote>
+    <p>That's not a reason to discount hard work — it's a reason to take seriously the part of the equation we can actually influence for other people: building fairer systems, and being the person who opens a door for someone else the way one was once opened for you. Real success isn't just the finish line you cross — it's counted, too, in the opportunities you help create along the way.</p>
+    <p><a href="https://sandeep-growtharc.github.io/opportunityforall.html">Read the full essay — "Beyond the Finish Line" →</a></p>
+  </div>
+</section>
+
+<section class="block">
+  <div class="eyebrow">Explore</div>
+  <h2>More</h2>
+  <div class="card-grid">
+    <a class="card" href="projects/">
+      <div class="card-title">Projects →</div>
+      <p class="card-desc">Things I've built, and case studies behind them.</p>
+    </a>
+    <a class="card" href="blogs/">
+      <div class="card-title">Blogs →</div>
+      <p class="card-desc">Notes and essays on engineering, security, and career.</p>
+    </a>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-footer">© <span id="year"></span> Sandeep Upadhyay</footer>
+
+<script src="assets/app.js"></script>
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
