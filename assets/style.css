@@ -99,12 +99,12 @@ a:hover { text-decoration: underline; }
 .hero-photo {
   width: 128px; height: 128px; border-radius: 50%; flex-shrink: 0;
   background: var(--surface-1); border: 4px solid var(--bg);
-  box-shadow: var(--shadow); margin-top: -56px;
+  box-shadow: var(--shadow); margin-top: -56px; position: relative;
   display: flex; align-items: center; justify-content: center;
   color: var(--text-muted); font-size: 13px; text-align: center;
   overflow: hidden;
 }
-.hero-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.hero-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
 .hero h1 { margin: 0 0 6px; font-size: 32px; }
 .hero .tagline { margin: 0; color: var(--text-secondary); font-size: 17px; }
 
