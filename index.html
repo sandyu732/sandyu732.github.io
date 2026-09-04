@@ -11,7 +11,7 @@
 <body>
 
 <nav class="topnav">
-  <a class="brand" href="index.html">Sandeep Upadhyay</a>
+  <a class="brand" href="index.html" data-field="profile-name">Sandeep Upadhyay</a>
   <div class="links">
     <a href="projects/">Projects</a>
     <a href="blogs/">Blogs</a>
@@ -28,8 +28,8 @@
 <div class="hero">
   <div class="hero-photo"><img src="assets/img/profile.jpg" alt="Sandeep Upadhyay"></div>
   <div>
-    <h1>Sandeep Upadhyay</h1>
-    <p class="tagline">[ One-line tagline — role, focus, or what you're building right now ]</p>
+    <h1 data-field="profile-name">Sandeep Upadhyay</h1>
+    <p class="tagline" data-field="tagline">[ One-line tagline — role, focus, or what you're building right now ]</p>
   </div>
 </div>
 
@@ -38,28 +38,7 @@
   <h2>Trajectory</h2>
   <p class="lede">From graduating engineering and starting my first full-time software role in 2017, to today — the road so far.</p>
 
-  <div class="road">
-    <div class="milestone placeholder">
-      <div class="year">2017</div>
-      <h3>Graduated &amp; started first full-time software role</h3>
-      <p>[ Add company, role, and what you were building ]</p>
-    </div>
-    <div class="milestone placeholder">
-      <div class="year">[ year ]</div>
-      <h3>[ Milestone title ]</h3>
-      <p>[ Add details — promotion, new company, a project that mattered ]</p>
-    </div>
-    <div class="milestone placeholder">
-      <div class="year">[ year ]</div>
-      <h3>[ Milestone title ]</h3>
-      <p>[ Add details ]</p>
-    </div>
-    <div class="milestone placeholder">
-      <div class="year">2026</div>
-      <h3>Today</h3>
-      <p>[ Where you are now, and what's next ]</p>
-    </div>
-  </div>
+  <div class="road" id="road"></div>
 </section>
 
 <section class="block">
@@ -90,9 +69,11 @@
 
 </main>
 
-<footer class="site-footer">© <span id="year"></span> Sandeep Upadhyay</footer>
+<footer class="site-footer">© <span id="year"></span> <span data-field="profile-name">Sandeep Upadhyay</span></footer>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
 <script src="assets/app.js"></script>
+<script src="assets/content.js"></script>
 <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
 </body>
 </html>
