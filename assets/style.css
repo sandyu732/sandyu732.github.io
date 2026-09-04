@@ -80,8 +80,19 @@ a:hover { text-decoration: underline; }
 }
 
 /* Cover banner */
-.cover { width: 100%; height: clamp(220px, 30vw, 460px); overflow: hidden; }
-.cover img { width: 100%; height: 100%; object-fit: cover; object-position: center 65%; display: block; }
+.cover { width: 100%; height: clamp(240px, 34vw, 520px); overflow: hidden; }
+.cover img {
+  width: 100%; height: 100%; object-fit: cover; object-position: center 38%; display: block;
+  transform-origin: center 38%;
+  animation: cover-zoom 26s ease-in-out infinite alternate;
+}
+@keyframes cover-zoom {
+  from { transform: scale(1); }
+  to { transform: scale(1.12); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cover img { animation: none; }
+}
 
 /* Hero */
 .hero { display: flex; gap: 28px; align-items: center; padding: 0 0 40px; }
