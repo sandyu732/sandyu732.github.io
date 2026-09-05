@@ -56,15 +56,35 @@ a:hover { text-decoration: underline; }
   padding: 14px 24px; border-bottom: 1px solid var(--border);
   position: sticky; top: 0; background: var(--bg); z-index: 10;
 }
-.topnav .brand { font-weight: 700; color: var(--text-primary); font-size: 15px; }
-.topnav .links { display: flex; gap: 20px; align-items: center; }
-.topnav .links a { color: var(--text-secondary); font-weight: 500; font-size: 14px; }
+.topnav .links { display: flex; gap: 10px; align-items: center; }
+.topnav .brand,
+.topnav .links a,
 .icon-btn {
   background: var(--surface-2); border: 1px solid var(--border); color: var(--text-primary);
-  border-radius: 999px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer;
+  border-radius: 999px; padding: 6px 14px; font-size: 13px; font-weight: 600;
   box-shadow: var(--shadow);
 }
-.icon-btn:hover { background: var(--surface-1); }
+.topnav .brand:hover,
+.topnav .links a:hover,
+.icon-btn:hover { background: var(--surface-1); text-decoration: none; }
+.topnav .brand { font-size: 15px; }
+.icon-btn { cursor: pointer; }
+
+/* Entrance + scroll-reveal animation */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-in { animation: fadeInUp 1s ease-out forwards; opacity: 0; }
+.reveal {
+  opacity: 0; transform: translateY(24px);
+  transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+}
+.reveal.is-visible { opacity: 1; transform: translateY(0); }
+@media (prefers-reduced-motion: reduce) {
+  .fade-in { animation: none; opacity: 1; }
+  .reveal { opacity: 1; transform: none; transition: none; }
+}
 
 /* Hero */
 .hero { display: flex; gap: 28px; align-items: center; padding: 48px 0 40px; }
