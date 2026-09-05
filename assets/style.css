@@ -67,7 +67,8 @@ a:hover { text-decoration: underline; }
 .topnav .brand:hover,
 .topnav .links a:hover,
 .icon-btn:hover { background: var(--surface-1); text-decoration: none; }
-.topnav .brand { font-size: 15px; }
+.topnav .brand { font-size: 15px; display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px 6px 6px; }
+.brand-photo { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; display: block; }
 .icon-btn { cursor: pointer; }
 
 /* Entrance + scroll-reveal animation */
