@@ -1,41 +1,26 @@
 /* sandyu732.github.io — shared site design system */
 
 :root {
-  --bg: #ffffff;
-  --surface-1: #f6f8fa;
+  --bg: #fdfbf8;
+  --surface-1: #f3efe8;
   --surface-2: #ffffff;
-  --border: #d0d7de;
-  --border-strong: #8c959f;
-  --text-primary: #1f2328;
-  --text-secondary: #59636e;
-  --text-muted: #818b98;
-  --accent: #0969da;
-  --accent-bg: #ddf4ff;
-  --road: #8c959f;
-  --road-dash: #ffffff;
-  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --border: #e5e1d8;
+  --border-strong: #c9c2b3;
+  --text-primary: #1f2937;
+  --text-secondary: #4b5563;
+  --text-muted: #6b7280;
+  --accent: #2563eb;
+  --accent-bg: #dbeafe;
+  --road: #d1d5db;
+  --road-dash: #fdfbf8;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
   --radius: 8px;
   --radius-lg: 12px;
   --shadow: 0 1px 2px rgba(0,0,0,0.06);
 }
 
-@media (prefers-color-scheme: dark) {
-  html:not([data-theme="light"]) {
-    --bg: #0d1117;
-    --surface-1: #161b22;
-    --surface-2: #0d1117;
-    --border: #30363d;
-    --border-strong: #484f58;
-    --text-primary: #e6edf3;
-    --text-secondary: #9198a1;
-    --text-muted: #6e7681;
-    --accent: #4493f8;
-    --accent-bg: #0c2d6b;
-    --road: #30363d;
-    --road-dash: #0d1117;
-  }
-}
-
+/* Light (cream) is the default regardless of system preference.
+   Dark only applies when explicitly toggled via data-theme="dark". */
 html[data-theme="dark"] {
   --bg: #0d1117;
   --surface-1: #161b22;
@@ -75,9 +60,11 @@ a:hover { text-decoration: underline; }
 .topnav .links { display: flex; gap: 20px; align-items: center; }
 .topnav .links a { color: var(--text-secondary); font-weight: 500; font-size: 14px; }
 .icon-btn {
-  background: var(--surface-1); border: 1px solid var(--border); color: var(--text-primary);
-  border-radius: var(--radius); padding: 6px 12px; font-size: 13px; cursor: pointer;
+  background: var(--surface-2); border: 1px solid var(--border); color: var(--text-primary);
+  border-radius: 999px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer;
+  box-shadow: var(--shadow);
 }
+.icon-btn:hover { background: var(--surface-1); }
 
 /* Hero */
 .hero { display: flex; gap: 28px; align-items: center; padding: 48px 0 40px; }
