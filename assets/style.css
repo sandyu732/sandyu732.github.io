@@ -67,7 +67,11 @@ a:hover { text-decoration: underline; }
 .topnav .brand:hover,
 .topnav .links a:hover,
 .icon-btn:hover { background: var(--surface-1); text-decoration: none; }
-.topnav .brand { font-size: 15px; display: inline-flex; align-items: center; padding: 6px 14px 6px 6px; }
+.topnav .brand {
+  font-size: 15px; display: inline-flex; align-items: center;
+  padding: 6px 14px 6px 6px; transition: padding 0.35s ease;
+}
+.topnav .brand:has(.brand-photo.is-hidden) { padding: 6px 14px; }
 .brand-photo {
   width: 26px; height: 26px; margin-right: 8px; border-radius: 50%; object-fit: cover; display: block;
   opacity: 1; transform: scale(1);

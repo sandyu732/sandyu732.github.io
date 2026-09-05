@@ -30,7 +30,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const heroPhoto = document.querySelector('.hero-photo');
   const brandPhoto = document.querySelector('.brand-photo');
   if (!heroPhoto || !brandPhoto || !('IntersectionObserver' in window)) return;
-  brandPhoto.classList.add('is-hidden');
   const heroObserver = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       brandPhoto.classList.toggle('is-hidden', entry.isIntersecting);
