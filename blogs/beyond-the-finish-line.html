@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beyond the Finish Line: Redefining Success</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF8;
+            color: #333333;
+        }
+        .fade-in {
+            animation: fadeIn 1s ease-in-out forwards;
+            opacity: 0;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .barrier-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transform-style: preserve-3d;
+        }
+        .barrier-card.is-flipped {
+            transform: rotateY(180deg);
+        }
+        .card-face {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        .card-back {
+            transform: rotateY(180deg);
+        }
+        .back-home {
+            position: fixed; top: 14px; left: 14px; z-index: 50;
+            font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600;
+            color: #333; background: rgba(255,255,255,0.9);
+            padding: 6px 14px; border-radius: 999px; text-decoration: none;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+        }
+        .back-home:hover { background: #fff; }
+    </style>
+</head>
+<body class="antialiased">
+
+    <a class="back-home" href="../index.html">&larr; Sandeep Upadhyay</a>
+
+    <main class="w-full">
+        <header class="relative h-screen flex items-center justify-center text-center overflow-hidden">
+            <canvas id="hero-canvas" class="absolute top-0 left-0 w-full h-full"></canvas>
+            <div class="relative z-10 p-4">
+                <h1 class="text-4xl md:text-6xl font-bold tracking-tight text-gray-800 fade-in" style="animation-delay: 0.2s;">Beyond the Finish Line</h1>
+                <p class="mt-4 text-lg md:text-xl text-gray-600 max-w-2xl mx-auto fade-in" style="animation-delay: 0.4s;">Rethinking our definitions of success and the journey to get there.</p>
+            </div>
+        </header>
+
+        <section id="the-narrative" class="py-20 px-4 bg-white text-gray-800">
+            <div class="max-w-4xl mx-auto">
+                <div class="text-center mb-12">
+                     <h2 class="text-3xl font-bold text-gray-800">The Story We're Told</h2>
+                     <p class="mt-2 text-gray-600">We often celebrate success stories built on two key pillars.</p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8 text-center">
+                    <div class="p-8 rounded-lg border border-gray-200 bg-white">
+                        <span class="text-4xl mb-4 block">&#10024;</span>
+                        <h3 class="text-xl font-semibold mb-2 text-gray-800">Talent</h3>
+                        <p class="text-gray-600">We rightfully admire the incredible skill and innate ability that fuel great achievements. It's a foundational element of every success story we hear.</p>
+                    </div>
+                    <div class="p-8 rounded-lg border border-gray-200 bg-white">
+                        <span class="text-4xl mb-4 block">&#128170;</span>
+                        <h3 class="text-xl font-semibold mb-2 text-gray-800">Hard Work</h3>
+                        <p class="text-gray-600">The relentless effort and determination that transform potential into reality. It's the engine that drives progress and unlocks new opportunities.</p>
+                    </div>
+                </div>
+                 <div class="mt-8 text-center">
+                    <div class="p-8 rounded-lg border border-gray-200 bg-white">
+                        <span class="text-4xl mb-4 block">&#128161;</span>
+                        <h3 class="text-xl font-semibold mb-2 text-gray-800">The Missing Piece</h3>
+                        <p class="text-gray-600">But what about the role of opportunity? It's the often-invisible element that can change the entire trajectory of a journey, making the path to success unequal.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="opportunity" class="py-20 px-4 text-gray-800">
+            <div class="max-w-4xl mx-auto text-center">
+                <h2 class="text-3xl font-bold text-gray-800">The Power of a Single Chance</h2>
+                <p class="mt-2 text-gray-600 max-w-2xl mx-auto">A single opportunity can bridge the gap between hard work and success. Watch what happens.</p>
+                <div class="mt-12 p-8 border border-gray-200 rounded-lg bg-white relative overflow-hidden">
+                    <div class="flex justify-between items-center w-full max-w-2xl mx-auto relative">
+                        <span id="runner-start" class="text-2xl z-20 relative">&#127939;</span>
+                        <div class="flex-1 relative mx-4">
+                            <div id="chasm" class="h-2 rounded-full border-t-2 border-b-2 border-gray-400 border-dashed"></div>
+                            <div id="bridge" class="absolute left-0 top-0 h-full bg-green-500 rounded-full transition-all duration-1000 z-10" style="width: 0;"></div>
+                            <div id="hurdle" class="absolute top-0 w-8 h-full z-20 transition-all duration-1000" style="left: 50%; transform: translateX(-50%) rotate(0deg); opacity: 0;">
+                                <div class="bg-red-500 rounded-full w-full h-full"></div>
+                            </div>
+                        </div>
+                        <span id="trophy-goal" class="text-2xl z-20">&#127942;</span>
+                    </div>
+                    <button id="opportunity-btn" class="mt-8 bg-blue-600 text-white font-semibold py-2 px-6 rounded-lg hover:bg-blue-700 transition-colors">Create an Opportunity</button>
+                    <p id="opportunity-text" class="mt-4 text-gray-600 h-6 transition-opacity duration-500 opacity-0"></p>
+                </div>
+            </div>
+        </section>
+
+        <section id="barriers" class="py-20 px-4 bg-white text-gray-800">
+             <div class="max-w-5xl mx-auto text-center">
+                <h2 class="text-3xl font-bold text-gray-800">An Uneven Playing Field</h2>
+                <p class="mt-2 text-gray-600 max-w-2xl mx-auto">Some work just as hard, yet face hidden barriers. The playing field isn't always level. Click the cards below to see different journeys.</p>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mt-12">
+                    <div class="barrier-card-container aspect-square">
+                        <div class="barrier-card relative w-full h-full cursor-pointer" data-clicks-needed="1">
+                            <div class="card-face absolute w-full h-full flex items-center justify-center bg-gray-200 rounded-lg border border-gray-200 p-2 text-gray-800">Click Me</div>
+                            <div class="card-back absolute w-full h-full flex items-center justify-center bg-green-100 rounded-lg border border-gray-200 p-2 text-center text-gray-800">
+                                <span class="text-2xl">&#9989;</span>
+                                <p class="text-sm font-semibold mt-1">Smooth Path</p>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="barrier-card-container aspect-square">
+                        <div class="barrier-card relative w-full h-full cursor-pointer" data-clicks-needed="3">
+                            <div class="card-face absolute w-full h-full flex items-center justify-center bg-gray-200 rounded-lg border border-gray-200 p-2 text-gray-800">Click Me</div>
+                            <div class="card-back absolute w-full h-full flex items-center justify-center bg-yellow-100 rounded-lg border border-gray-200 p-2 text-center text-gray-800">
+                                <span class="text-2xl">&#128679;</span>
+                               <p class="text-sm font-semibold mt-1">Hidden Barrier</p>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="barrier-card-container aspect-square">
+                        <div class="barrier-card relative w-full h-full cursor-pointer" data-clicks-needed="1">
+                            <div class="card-face absolute w-full h-full flex items-center justify-center bg-gray-200 rounded-lg border border-gray-200 p-2 text-gray-800">Click Me</div>
+                            <div class="card-back absolute w-full h-full flex items-center justify-center bg-green-100 rounded-lg border border-gray-200 p-2 text-center text-gray-800">
+                                <span class="text-2xl">&#9989;</span>
+                                <p class="text-sm font-semibold mt-1">Smooth Path</p>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="barrier-card-container aspect-square">
+                        <div class="barrier-card relative w-full h-full cursor-pointer" data-clicks-needed="5">
+                             <div class="card-face absolute w-full h-full flex items-center justify-center bg-gray-200 rounded-lg border border-gray-200 p-2 text-gray-800">Click Me</div>
+                            <div class="card-back absolute w-full h-full flex items-center justify-center bg-red-100 rounded-lg border border-gray-200 p-2 text-center text-gray-800">
+                                <span class="text-2xl">&#9940;</span>
+                                <p class="text-sm font-semibold mt-1">Systemic Block</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                 <p class="mt-6 text-gray-500 text-sm italic">Notice how some paths required more effort to reveal?</p>
+            </div>
+        </section>
+
+        <section id="call-to-action" class="py-20 px-4 text-gray-800">
+            <div class="max-w-4xl mx-auto">
+                <div class="text-center mb-12">
+                     <h2 class="text-3xl font-bold text-gray-800">How We Can Make a Difference</h2>
+                     <p class="mt-2 text-gray-600">Instead of just celebrating individual wins, let's focus on building a better system for everyone.</p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="p-8 rounded-lg bg-white border border-gray-200 text-center hover:shadow-lg transition-shadow">
+                        <span class="text-4xl mb-4 block">&#129309;</span>
+                        <h3 class="text-xl font-semibold mb-2 text-gray-800">Build Fairer Systems</h3>
+                        <p class="text-gray-600">Let's challenge the status quo and create communities and workplaces that provide a fair chance for everyone to thrive, regardless of their starting point.</p>
+                    </div>
+                    <div class="p-8 rounded-lg bg-white border border-gray-200 text-center hover:shadow-lg transition-shadow">
+                        <span class="text-4xl mb-4 block">&#10084;&#65039;</span>
+                        <h3 class="text-xl font-semibold mb-2 text-gray-800">Be Kind & Supportive</h3>
+                        <p class="text-gray-600">If you can help create an opportunity or support someone's journey, do so without hesitation. A small act of kindness can make a world of difference.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="py-20 px-4 bg-gray-800 text-white">
+            <div class="max-w-4xl mx-auto text-center">
+                <h2 class="text-3xl font-bold">A New Definition of Success</h2>
+                <p class="mt-4 text-lg text-gray-400 max-w-2xl mx-auto">
+                    True success isn't just about what you achieve. It's about the opportunities you help create for others.
+                </p>
+                <p class="mt-4 text-sm text-gray-400">crafted with &#10084;&#65039; by <a href="https://www.linkedin.com/in/sandyu732/" target="_blank" rel="noopener noreferrer">Sandeep Upadhyay</a></p>
+            </div>
+        </footer>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const canvas = document.getElementById('hero-canvas');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            resizeCanvas();
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.size = Math.random() * 2 + 1;
+                    this.speedX = Math.random() * 1 - 0.5;
+                    this.speedY = Math.random() * 1 - 0.5;
+                    this.color = 'rgba(255, 255, 255, 0.1)';
+                }
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    if (this.size > 0.1) this.size -= 0.01;
+                }
+                draw() {
+                    ctx.fillStyle = this.color;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+            function initParticles() {
+                for (let i = 0; i < 100; i++) {
+                    particles.push(new Particle());
+                }
+            }
+            initParticles();
+            function handleParticles() {
+                for (let i = 0; i < particles.length; i++) {
+                    particles[i].update();
+                    particles[i].draw();
+                    if (particles[i].size <= 0.1) {
+                        particles.splice(i, 1);
+                        i--;
+                        particles.push(new Particle());
+                    }
+                }
+            }
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                handleParticles();
+                requestAnimationFrame(animate);
+            }
+            animate();
+            window.addEventListener('resize', resizeCanvas);
+            const opportunityBtn = document.getElementById('opportunity-btn');
+            const bridge = document.getElementById('bridge');
+            const hurdle = document.getElementById('hurdle');
+            const opportunityText = document.getElementById('opportunity-text');
+            const runner = document.getElementById('runner-start');
+            const trophy = document.getElementById('trophy-goal');
+            let transitionStep = 0;
+            opportunityBtn.addEventListener('click', () => {
+                if (transitionStep === 0) {
+                    opportunityBtn.disabled = true;
+                    opportunityBtn.textContent = 'Building Bridge...';
+                    bridge.style.width = '50%';
+                    hurdle.style.opacity = '1';
+                    setTimeout(() => {
+                        opportunityText.style.opacity = '1';
+                        opportunityText.textContent = "An opportunity is created, but there are still obstacles in the way.";
+                        opportunityBtn.textContent = 'Clear the Hurdle';
+                        opportunityBtn.disabled = false;
+                        transitionStep = 1;
+                    }, 1000);
+                } else if (transitionStep === 1) {
+                    opportunityBtn.disabled = true;
+                    opportunityBtn.textContent = 'Clearing Hurdle...';
+                    hurdle.style.transform = 'translateX(-50%) rotate(90deg)';
+                    hurdle.style.opacity = '0';
+                    bridge.style.width = '100%';
+                    setTimeout(() => {
+                        opportunityBtn.textContent = 'Goal Achieved!';
+                        opportunityBtn.disabled = true;
+                        transitionStep = 2;
+                        const runnerRect = runner.getBoundingClientRect();
+                        const trophyRect = trophy.getBoundingClientRect();
+                        const finalDistance = trophyRect.left - runnerRect.left + runner.offsetWidth + 10;
+                        runner.style.transition = 'transform 1.5s ease-in-out';
+                        runner.style.transform = `translateX(${finalDistance}px)`;
+                        opportunityText.textContent = "The path is clear. The goal has been achieved!";
+                    }, 1000);
+                } else if (transitionStep === 2) {
+                    // This block is now intentionally inactive and the button is disabled.
+                }
+            });
+            const barrierCards = document.querySelectorAll('.barrier-card');
+            barrierCards.forEach(card => {
+                let clicks = 0;
+                const clicksNeeded = parseInt(card.dataset.clicksNeeded, 10);
+                card.addEventListener('click', () => {
+                    clicks++;
+                    const shakeIntensity = (clicksNeeded - clicks) * 2;
+                    if (clicks < clicksNeeded) {
+                        card.style.animation = `shake ${0.1 * shakeIntensity}s`;
+                        setTimeout(() => card.style.animation = '', 100 * shakeIntensity);
+                    } else {
+                        card.classList.add('is-flipped');
+                    }
+                });
+            });
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes shake {
+                    0%, 100% { transform: translateX(0); }
+                    25% { transform: translateX(-5px); }
+                    75% { transform: translateX(5px); }
+                }
+            `;
+            document.head.append(style);
+        });
+    </script>
+</body>
+</html>

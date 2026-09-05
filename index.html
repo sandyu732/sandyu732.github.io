@@ -5,13 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sandeep Upadhyay</title>
 <meta name="description" content="Personal site — professional journey, projects, and writing.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/style.css">
 <script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
 </head>
 <body>
 
 <nav class="topnav">
-  <a class="brand" href="index.html">Sandeep Upadhyay</a>
+  <a class="brand" href="index.html"><img class="brand-photo is-hidden" src="assets/img/profile.jpg" alt="">Sandeep Upadhyay</a>
   <div class="links">
     <a href="projects/">Projects</a>
     <a href="blogs/">Blogs</a>
@@ -19,62 +22,134 @@
   </div>
 </nav>
 
-<div class="cover">
-  <img src="assets/img/hero-landscape.jpg" alt="Snow-covered mountains reflected in a still lake">
-</div>
-
 <main>
 
 <div class="hero">
-  <div class="hero-photo"><img src="assets/img/profile.jpg" alt="Sandeep Upadhyay"></div>
-  <div>
-    <h1>Sandeep Upadhyay</h1>
-    <p class="tagline">Software Engineer</p>
-    <blockquote class="quote">Arise, awake, and stop not till the goal is reached.</blockquote>
+  <div class="hero-photo fade-in"><img src="assets/img/profile.jpg" alt="Sandeep Upadhyay"></div>
+  <div class="hero-text">
+    <h1 class="fade-in" style="animation-delay: 0.15s;">Sandeep Upadhyay</h1>
+    <p class="tagline fade-in" style="animation-delay: 0.3s;">Software Engineer</p>
+    <blockquote class="quote fade-in" style="animation-delay: 0.45s;">Arise, awake, and stop not till the goal is reached.</blockquote>
   </div>
 </div>
 
-<section class="block">
-  <div class="eyebrow">The journey</div>
-  <h2>Trajectory</h2>
-  <p class="lede">From graduating engineering and starting my first full-time software role in 2017, to today — the road so far.</p>
-
-  <div class="road">
-    <div class="milestone placeholder">
-      <div class="year">2017</div>
-      <h3>Graduated &amp; started first full-time software role</h3>
-      <p>[ Add company, role, and what you were building ]</p>
-    </div>
-    <div class="milestone placeholder">
-      <div class="year">[ year ]</div>
-      <h3>[ Milestone title ]</h3>
-      <p>[ Add details — promotion, new company, a project that mattered ]</p>
-    </div>
-    <div class="milestone placeholder">
-      <div class="year">[ year ]</div>
-      <h3>[ Milestone title ]</h3>
-      <p>[ Add details ]</p>
-    </div>
-    <div class="milestone placeholder">
-      <div class="year">2026</div>
-      <h3>Today</h3>
-      <p>[ Where you are now, and what's next ]</p>
-    </div>
-  </div>
-</section>
-
-<section class="block">
+<section class="block reveal">
   <div class="eyebrow">A thought</div>
   <h2>Opportunity for all</h2>
   <div class="opportunity">
     <p>Talent and hard work get most of the credit for how careers turn out — but they're only two pieces of the story. The third, quieter piece is <strong>opportunity</strong>: the doors that happen to be open to you, the person who happens to take a chance on you, the room you happen to get into. Two people can bring the same effort and talent to their work and still walk very different paths, simply because one of them ran into a hidden barrier the other never had to see.</p>
     <blockquote>A single opportunity can bridge the gap between hard work and success.</blockquote>
     <p>That's not a reason to discount hard work — it's a reason to take seriously the part of the equation we can actually influence for other people: building fairer systems, and being the person who opens a door for someone else the way one was once opened for you. Real success isn't just the finish line you cross — it's counted, too, in the opportunities you help create along the way.</p>
-    <p><a href="https://sandeep-growtharc.github.io/opportunityforall.html">Read the full essay — "Beyond the Finish Line" →</a></p>
+    <p><a href="blogs/beyond-the-finish-line.html">Read the full essay — "Beyond the Finish Line" →</a></p>
   </div>
 </section>
 
-<section class="block">
+<section class="block reveal">
+  <div class="eyebrow">The journey</div>
+  <h2>Trajectory</h2>
+  <p class="lede">From graduating engineering and starting my first full-time software role in 2017, to today — the road so far.</p>
+
+  <div class="road">
+    <div class="year-group reveal">
+      <div class="year">2017</div>
+      <div class="year-entries">
+        <div class="year-entry">
+          <div class="entry-date">May</div>
+          <h3>Graduated with a Bachelor's of Engineering in Information Technology</h3>
+        </div>
+        <div class="year-entry">
+          <div class="entry-date">Jul 28</div>
+          <h3>Joined Accenture Solutions Pvt Ltd as Application Developer</h3>
+          <p> Bangalore, India</p>
+        </div>
+        <div class="year-entry">
+          <div class="entry-date">Nov</div>
+          <h3>First project assignment</h3>
+          <p>Staffed onto my first project at Accenture.</p>
+        </div>
+      </div>
+    </div>
+    <div class="year-group reveal">
+      <div class="year">2018</div>
+      <div class="year-entries">
+        <div class="year-entry">
+          <div class="entry-date">Oct</div>
+          <h3>Promoted at Accenture</h3>
+        </div>
+        <div class="year-entry">
+          <div class="entry-date">Dec</div>
+          <h3>Received the ACE Award and APEX Award</h3>
+          <p>Two of Accenture's most prestigious internal awards.</p>
+        </div>
+      </div>
+    </div>
+    <div class="year-group reveal">
+      <div class="year">2019</div>
+      <div class="year-entries">
+        <div class="year-entry">
+          <div class="entry-date">Mar</div>
+          <h3>Moved to a new team</h3>
+          <p>Shifted onto a team focused on a specific technology, and asked to prepare for an onsite assignment.</p>
+        </div>
+        <div class="year-entry">
+          <div class="entry-date">Nov</div>
+          <h3>US visa stamped</h3>
+        </div>
+      </div>
+    </div>
+    <div class="year-group reveal">
+      <div class="year">2020</div>
+      <div class="year-entries">
+        <div class="year-entry">
+          <div class="entry-date">Jan 1</div>
+          <h3>First trip to the US</h3>
+          <p>Joined the command center on Accenture's Disney account in Orlando, handling operations through February.</p>
+        </div>
+        <div class="year-entry">
+          <div class="entry-date">Mar</div>
+          <h3>Returned to India, promoted</h3>
+          <p>Moved to the Site Reliability Engineering (SRE) team, working on the Disney account.</p>
+        </div>
+        <div class="year-entry">
+          <div class="entry-date">Nov 30</div>
+          <h3>Left Accenture, joined Microland</h3>
+        </div>
+      </div>
+    </div>
+    <div class="year-group reveal">
+      <div class="year">2021</div>
+      <div class="year-entries">
+        <div class="year-entry">
+          <div class="entry-date">Jun</div>
+          <h3>Left Microland, joined Hero</h3>
+          <p>Joined the startup Hero at the invitation of a former Accenture leader. Went on to work on the Symphony project there through November 2022.</p>
+        </div>
+      </div>
+    </div>
+    <div class="year-group reveal">
+      <div class="year">2022</div>
+      <div class="year-entries">
+        <div class="year-entry">
+          <div class="entry-date">Dec</div>
+          <h3>Joined Google as a Data Engineer</h3>
+          <p>Via Hero, on a data engineering project — for about six months, into 2023.</p>
+        </div>
+      </div>
+    </div>
+    <div class="year-group reveal placeholder">
+      <div class="year">2026</div>
+      <div class="year-entries">
+        <div class="year-entry">
+          <div class="entry-date">Today</div>
+          <h3>[ Milestone title ]</h3>
+          <p>[ Where you are now, and what's next ]</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block reveal">
   <div class="eyebrow">Explore</div>
   <h2>More</h2>
   <div class="card-grid">
