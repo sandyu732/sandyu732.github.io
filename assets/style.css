@@ -107,7 +107,7 @@ a:hover { text-decoration: underline; }
 .hero-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
 .hero h1 { margin: 0 0 6px; font-size: 32px; }
 .hero .quote { margin: 0 0 10px; padding-left: 14px; border-left: 3px solid var(--accent); color: var(--text-primary); font-size: 17px; font-style: italic; }
-.hero .tagline { margin: 0; color: var(--text-secondary); font-size: 15px; }
+.hero .tagline { margin: 0 0 10px; color: var(--text-secondary); font-size: 15px; }
 
 /* Section headings */
 section.block { margin: 56px 0; }
