@@ -1,0 +1,163 @@
+/* sandyu732.github.io — shared site design system */
+
+:root {
+  --bg: #ffffff;
+  --surface-1: #f6f8fa;
+  --surface-2: #ffffff;
+  --border: #d0d7de;
+  --border-strong: #8c959f;
+  --text-primary: #1f2328;
+  --text-secondary: #59636e;
+  --text-muted: #818b98;
+  --accent: #0969da;
+  --accent-bg: #ddf4ff;
+  --road: #8c959f;
+  --road-dash: #ffffff;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --shadow: 0 1px 2px rgba(0,0,0,0.06);
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) {
+    --bg: #0d1117;
+    --surface-1: #161b22;
+    --surface-2: #0d1117;
+    --border: #30363d;
+    --border-strong: #484f58;
+    --text-primary: #e6edf3;
+    --text-secondary: #9198a1;
+    --text-muted: #6e7681;
+    --accent: #4493f8;
+    --accent-bg: #0c2d6b;
+    --road: #30363d;
+    --road-dash: #0d1117;
+  }
+}
+
+html[data-theme="dark"] {
+  --bg: #0d1117;
+  --surface-1: #161b22;
+  --surface-2: #0d1117;
+  --border: #30363d;
+  --border-strong: #484f58;
+  --text-primary: #e6edf3;
+  --text-secondary: #9198a1;
+  --text-muted: #6e7681;
+  --accent: #4493f8;
+  --accent-bg: #0c2d6b;
+  --road: #30363d;
+  --road-dash: #0d1117;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.6;
+}
+main { max-width: 860px; margin: 0 auto; padding: 0 24px 80px; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Nav */
+.topnav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 24px; border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; background: var(--bg); z-index: 10;
+}
+.topnav .brand { font-weight: 700; color: var(--text-primary); font-size: 15px; }
+.topnav .links { display: flex; gap: 20px; align-items: center; }
+.topnav .links a { color: var(--text-secondary); font-weight: 500; font-size: 14px; }
+.icon-btn {
+  background: var(--surface-1); border: 1px solid var(--border); color: var(--text-primary);
+  border-radius: var(--radius); padding: 6px 12px; font-size: 13px; cursor: pointer;
+}
+
+/* Cover banner */
+.cover { width: 100%; height: clamp(240px, 34vw, 520px); overflow: hidden; }
+.cover img {
+  width: 100%; height: 100%; object-fit: cover; object-position: center 38%; display: block;
+  transform-origin: center 38%;
+  animation: cover-zoom 26s ease-in-out infinite alternate;
+}
+@keyframes cover-zoom {
+  from { transform: scale(1); }
+  to { transform: scale(1.12); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cover img { animation: none; }
+}
+
+/* Hero */
+.hero { display: flex; gap: 28px; align-items: center; padding: 0 0 40px; }
+.hero-photo {
+  width: 128px; height: 128px; border-radius: 50%; flex-shrink: 0;
+  background: var(--surface-1); border: 4px solid var(--bg);
+  box-shadow: var(--shadow); margin-top: -56px; position: relative;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-muted); font-size: 13px; text-align: center;
+  overflow: hidden;
+}
+.hero-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.hero h1 { margin: 0 0 6px; font-size: 32px; }
+.hero .quote { margin: 0 0 10px; padding-left: 14px; border-left: 3px solid var(--accent); color: var(--text-primary); font-size: 17px; font-style: italic; }
+.hero .tagline { margin: 0 0 10px; color: var(--text-secondary); font-size: 15px; }
+
+/* Section headings */
+section.block { margin: 56px 0; }
+section.block h2 { font-size: 22px; margin-bottom: 6px; }
+section.block .lede { color: var(--text-secondary); margin-top: 0; }
+
+/* Journey road */
+.road {
+  position: relative; margin: 32px 0 0; padding-left: 36px;
+}
+.road::before {
+  content: ""; position: absolute; left: 10px; top: 4px; bottom: 4px; width: 4px;
+  background: repeating-linear-gradient(var(--road-dash), var(--road-dash) 6px, var(--road) 6px, var(--road) 14px);
+  border-radius: 2px;
+}
+.milestone { position: relative; padding-bottom: 36px; }
+.milestone:last-child { padding-bottom: 0; }
+.milestone::before {
+  content: ""; position: absolute; left: -36px; top: 2px; width: 14px; height: 14px;
+  border-radius: 50%; background: var(--accent); border: 3px solid var(--bg); box-shadow: 0 0 0 2px var(--accent);
+}
+.milestone .year { font-weight: 700; color: var(--accent); font-size: 14px; }
+.milestone h3 { margin: 2px 0 4px; font-size: 17px; }
+.milestone p { margin: 0; color: var(--text-secondary); }
+.milestone.placeholder p { font-style: italic; color: var(--text-muted); }
+
+/* Opportunity block */
+.opportunity {
+  background: var(--surface-1); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 28px 32px;
+}
+.opportunity blockquote {
+  margin: 16px 0; padding-left: 16px; border-left: 3px solid var(--accent);
+  color: var(--text-primary); font-size: 17px; font-style: italic;
+}
+
+/* Card grid (used on hub pages) */
+.card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; margin-top: 20px; }
+.card {
+  display: block; padding: 18px; border: 1px solid var(--border); border-radius: var(--radius);
+  background: var(--surface-2); box-shadow: var(--shadow); color: var(--text-primary);
+}
+.card:hover { border-color: var(--border-strong); text-decoration: none; }
+.card-title { font-weight: 600; font-size: 15px; margin-bottom: 6px; }
+.card-desc { color: var(--text-secondary); font-size: 13px; margin: 0; }
+.card.placeholder { color: var(--text-muted); border-style: dashed; }
+.card.placeholder .card-title { color: var(--text-muted); }
+
+.eyebrow { text-transform: uppercase; letter-spacing: .06em; font-size: 12px; color: var(--text-muted); font-weight: 600; }
+
+footer.site-footer {
+  max-width: 860px; margin: 0 auto; padding: 24px 24px 60px; color: var(--text-muted); font-size: 13px;
+}
