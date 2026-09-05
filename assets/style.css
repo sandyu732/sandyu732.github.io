@@ -67,8 +67,16 @@ a:hover { text-decoration: underline; }
 .topnav .brand:hover,
 .topnav .links a:hover,
 .icon-btn:hover { background: var(--surface-1); text-decoration: none; }
-.topnav .brand { font-size: 15px; display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px 6px 6px; }
-.brand-photo { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; display: block; }
+.topnav .brand { font-size: 15px; display: inline-flex; align-items: center; padding: 6px 14px 6px 6px; }
+.brand-photo {
+  width: 26px; height: 26px; margin-right: 8px; border-radius: 50%; object-fit: cover; display: block;
+  opacity: 1; transform: scale(1);
+  transition: opacity 0.35s ease, transform 0.35s ease, width 0.35s ease, margin 0.35s ease;
+}
+.brand-photo.is-hidden { opacity: 0; transform: scale(0.4); width: 0; margin-right: 0; }
+@media (prefers-reduced-motion: reduce) {
+  .brand-photo { transition: none; }
+}
 .icon-btn { cursor: pointer; }
 
 /* Entrance + scroll-reveal animation */

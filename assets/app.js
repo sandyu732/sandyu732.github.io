@@ -25,3 +25,16 @@ document.addEventListener('DOMContentLoaded', () => {
   }, { threshold: 0.15 });
   revealEls.forEach((el) => observer.observe(el));
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+  const heroPhoto = document.querySelector('.hero-photo');
+  const brandPhoto = document.querySelector('.brand-photo');
+  if (!heroPhoto || !brandPhoto || !('IntersectionObserver' in window)) return;
+  brandPhoto.classList.add('is-hidden');
+  const heroObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      brandPhoto.classList.toggle('is-hidden', entry.isIntersecting);
+    });
+  }, { threshold: 0 });
+  heroObserver.observe(heroPhoto);
+});
